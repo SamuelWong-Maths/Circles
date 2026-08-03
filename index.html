@@ -1,0 +1,2078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" href="data:;base64,iVBORw0KGgo=">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Daily Maths Practice: Circles</title>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<style>
+:root{--primary:#2c3e50;--secondary:#3498db;--bg:#ecf0f1;--text:#333;--success:#27ae60;--danger:#c0392b}
+*{box-sizing:border-box}
+body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:var(--bg);color:var(--text);margin:0;padding:20px;display:flex;flex-direction:column;align-items:center;min-height:100vh}
+.container{width:100%;max-width:1050px;background:#fff;padding:30px;border-radius:12px;box-shadow:0 8px 15px rgba(0,0,0,.1);text-align:center;margin-bottom:30px}
+.hidden{display:none!important}
+.score-board{font-size:1.35rem;font-weight:700;margin-bottom:18px;color:var(--secondary);background:#e8f4fc;padding:10px;border-radius:8px}
+.timer-chip{position:fixed;top:16px;right:16px;z-index:30;background:#fff;color:var(--primary);border:2px solid #d6dde2;border-radius:999px;padding:10px 14px;box-shadow:0 6px 14px rgba(0,0,0,.08);font-weight:700;font-size:.96rem}
+.btn{color:#fff;border:none;padding:14px 18px;margin:10px;font-size:1rem;border-radius:8px;cursor:pointer;width:100%;max-width:320px;transition:background .2s,transform .1s}
+.btn:hover{filter:brightness(.96)}
+.btn:active{transform:scale(.98)}
+.btn-green{background:#2ecc71}
+.btn-blue{background:var(--secondary)}
+.btn-gray{background:#95a5a6}
+.btn-red{background:#e74c3c}
+.btn-submit{background:#16a34a}
+.workspace{display:flex;flex-direction:column;gap:28px;text-align:center}
+@media (min-width:900px){.workspace{flex-direction:row;text-align:left;align-items:flex-start}.question-section{flex:1.08}.figure-section{flex:1}}
+.main-title{font-size:2.5rem;font-weight:800;color:var(--primary);margin:0 0 .2rem;line-height:1.08}
+.sub-title{font-size:2rem;font-weight:700;margin:0 0 1rem;line-height:1.08}
+#question-display{font-size:1.2rem;margin:8px 0 18px;min-height:72px;padding:8px;width:100%;text-align:center;line-height:1.55}
+.choices{width:100%;max-width:560px;display:flex;flex-direction:column;gap:10px;margin:10px auto 18px}
+.choice{background:#f7f9fa;color:#2c3e50;border:2px solid #d6dde2;border-radius:10px;padding:14px 16px;cursor:pointer;transition:.2s;text-align:left}
+.choice:hover{border-color:#3498db;background:#eef7fd}
+.choice.selected{border-color:#3498db;background:#dff0fb}
+.figure-card{width:100%;background:#f9fbfb;border:2px dashed #bdc3c7;border-radius:10px;padding:12px}
+.figure-toolbar{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.mini-chip{background:#eef7fd;color:var(--primary);border-radius:999px;padding:6px 12px;font-size:.95rem;font-weight:700}
+.tool-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
+.tool-btn{width:auto;max-width:none;margin:0;padding:8px 12px;font-size:.9rem;border-radius:999px;border:2px solid #d6dde2;background:#fff;color:#2c3e50;cursor:pointer}
+.tool-btn.active{border-color:#3498db;background:#eaf5fe}
+.color-dot{width:20px;height:20px;border-radius:50%;display:inline-block;border:2px solid rgba(0,0,0,.15)}
+.figure-stage{position:relative;width:100%;max-width:430px;margin:0 auto;aspect-ratio:1/1;background:#fff;border-radius:10px;overflow:hidden;border:1px solid #d6dde2}
+.figure-stage svg,.figure-stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.figure-stage canvas{cursor:crosshair;touch-action:none}
+.question-topbar{display:flex;justify-content:flex-end;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.help-note{font-size:.92rem;color:#64748b;text-align:center;margin-top:8px}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;justify-content:center;align-items:center;z-index:20000;padding:18px}
+.modal-content{background:#fff;padding:28px;border-radius:12px;text-align:center;width:min(1020px,96vw);max-height:92vh;overflow-y:auto;box-shadow:0 10px 25px rgba(0,0,0,.2)}
+.solution-grid{display:grid;grid-template-columns:1fr;gap:22px;margin-top:18px;text-align:left}
+@media (min-width:900px){.solution-grid{grid-template-columns:380px 1fr}}
+.solution-box{background:#f8f9fa;padding:16px;border-radius:10px;border-left:4px solid var(--secondary);overflow-x:auto}
+.feedback-actions,.menu-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:18px}
+.feedback-actions .btn,.menu-actions .btn{margin:0;max-width:240px}
+.sol-table{width:100%;border-collapse:separate;border-spacing:0 8px;font-size:1rem;line-height:1.55}
+.sol-table td{vertical-align:top}
+.sol-stmt{width:68%;padding-right:14px}
+.sol-reason{width:32%;color:#555;text-align:left;white-space:nowrap}
+.sol-table.compact .sol-stmt{width:58%;padding-right:8px}
+.sol-table.compact .sol-reason{width:42%;font-size:.94rem}
+.sol-gap td{height:10px;padding:0}
+.sol-note{margin:.2rem 0 .5rem;font-weight:600;color:#2c3e50}
+.arc{position:relative;display:inline-block;padding:0 .08em .02em}
+.arc:before{content:'';position:absolute;left:-.02em;right:-.02em;top:-.18em;height:.32em;border-top:1.6px solid currentColor;border-radius:60% 60% 0 0}
+.small-note{color:#64748b;font-size:.95rem;max-width:760px;margin:8px auto 0}
+</style>
+</head>
+<body>
+<div class="timer-chip">Overall time: <span id="overall-timer">00:00</span></div>
+
+<div id="menu-screen" class="container">
+  <h1 class="main-title">Daily Maths Practice</h1>
+  <h2 class="sub-title">Circles</h2>
+  <div class="score-board">Total Score: <span id="score-display">0</span></div>
+  <div class="menu-actions">
+    <button id="start-btn" class="btn btn-green" type="button">Start</button>
+  </div>
+</div>
+
+<div id="question-screen" class="container hidden">
+  <div class="question-topbar"><div class="mini-chip">Question time: <span id="question-timer">00:00</span></div></div>
+  <div class="workspace">
+    <div class="question-section">
+      <div id="question-display"></div>
+      <p style="font-size:1.02rem;color:#555;text-align:center;margin-bottom:8px">Choose the best answer:</p>
+      <div id="choices" class="choices"></div>
+      <button id="submit-btn" class="btn btn-submit" type="button">Submit answer</button>
+      <button id="back-menu-btn" class="btn btn-gray" type="button">Back to menu</button>
+    </div>
+    <div class="figure-section">
+      <div class="figure-card">
+        <div class="figure-toolbar"><button id="clear-all-btn" class="btn btn-red" type="button" style="margin:0;max-width:150px;padding:8px 15px;font-size:.9rem">Clear all</button></div>
+        <div class="tool-row" style="margin-bottom:10px">
+          <button id="tool-pen" class="tool-btn active" type="button">Pen</button>
+          <button id="tool-eraser" class="tool-btn" type="button">Eraser</button>
+          <button id="color-0" class="tool-btn active" type="button"><span class="color-dot" style="background:#2563eb"></span></button>
+          <button id="color-1" class="tool-btn" type="button"><span class="color-dot" style="background:#dc2626"></span></button>
+          <button id="color-2" class="tool-btn" type="button"><span class="color-dot" style="background:#16a34a"></span></button>
+          <button id="color-3" class="tool-btn" type="button"><span class="color-dot" style="background:#111827"></span></button>
+          <button id="color-4" class="tool-btn" type="button"><span class="color-dot" style="background:#a855f7"></span></button>
+        </div>
+        <div class="figure-stage"><svg id="question-figure" viewBox="0 0 360 360"></svg><canvas id="draw-canvas"></canvas></div>
+        <p class="help-note">Tip: drag and pause briefly to draw a straight line.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="feedback-modal" class="modal-overlay hidden">
+  <div class="modal-content">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message" style="font-size:1.08rem"></p>
+    <div class="solution-grid">
+      <div><div class="figure-card" style="padding:10px"><div class="figure-toolbar" style="margin-bottom:6px;justify-content:flex-start"><p style="margin:0;color:#7f8c8d;font-weight:700">Solution figure</p></div><div class="figure-stage" style="max-width:360px"><svg id="solution-figure" viewBox="0 0 360 360"></svg></div></div></div>
+      <div class="solution-box"><h3 style="margin-top:0;color:var(--primary)">Solution</h3><div id="solution-math"></div></div>
+    </div>
+    <div id="feedback-actions" class="feedback-actions"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+var svgNS='http://www.w3.org/2000/svg';
+var cx=180, cy=180, R=112;
+var COLORS=['#2563eb','#dc2626','#16a34a','#111827','#a855f7'];
+var currentScore=0,totalSeconds=0,questionSeconds=0,currentQuestion=null,selectedChoice=null;
+var canvas=null,ctx=null,currentTool='pen',currentColor=COLORS[0],isDrawing=false,startPt=null,lastPt=null,pauseTimer=null,lockedLine=false,strokeSnapshot=null;
+var initialized=false,timerHandle=null,submittedResults=false;
+var answerLog=[];
+
+function $(id){return document.getElementById(id)}
+function ri(a,b){return Math.floor(Math.random()*(b-a+1))+a}
+function pick(a){return a[ri(0,a.length-1)]}
+function fmt(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+function row(stmt,reason){return{stmt:stmt,reason:reason||''}}
+function gap(){return{gap:true}}
+function arc(t){return '<span class="arc">'+t+'</span>'}
+
+// Updated literal symbol generators (GAS friendly using Unicode escapes)
+function A(text){return '\u2220' + text}
+function DEG(n){return n + '\u00B0'}
+function tri(name){return '\u25B3' + name}
+function rad(name){return 'radii' + (name ? ': ' + name : '')}
+function iso(){return 'base \u2220s, isos. \u25B3'}
+function sameSeg(){return '\u2220s in the same segment'}
+function sumTri(){return '\u2220 sum of \u25B3'}
+function oppCyclic(){return 'opp. \u2220s, cyclic quad.'}
+function centerTwice(){return '\u2220 at centre twice \u2220 at circumference'}
+
+// Wait for MathJax to load before typesetting
+function safeTypeset(el){
+  if(window.MathJax && window.MathJax.typesetPromise && el){
+    window.MathJax.typesetPromise([el]).catch(function(){});
+  } else {
+    // If MathJax isn't ready, try again in 100ms
+    setTimeout(function() { safeTypeset(el); }, 100);
+  }
+}
+
+function sanitizeText(html){var d=document.createElement('div');d.innerHTML=html;return d.textContent||d.innerText||''}
+
+function renderSolution(q){
+  var rows=q.solutionRows||[];
+  var compact=rows.some(function(r){return !r.gap&&r.reason&&r.reason.length>34});
+  var h=q.solutionLead?'<p class="sol-note">'+q.solutionLead+'</p>':'';
+  h+='<table class="sol-table '+(compact?'compact':'')+'">';
+  rows.forEach(function(r){
+    if(r.gap){h+='<tr class="sol-gap"><td colspan="2"></td></tr>';return}
+    h+='<tr><td class="sol-stmt">'+r.stmt+'</td><td class="sol-reason">'+(r.reason?'('+r.reason+')':'')+'</td></tr>';
+  });
+  h+='</table>';
+  return h;
+}
+
+function polar(deg,r,x,y){r=r||R;x=x==null?cx:x;y=y==null?cy:y;var rad=deg*Math.PI/180;return{x:x+r*Math.cos(rad),y:y-r*Math.sin(rad)}}
+function labelPos(p,c,d){c=c||{x:cx,y:cy};d=d||18;var vx=p.x-c.x,vy=p.y-c.y,len=Math.hypot(vx,vy)||1;return{x:p.x+d*vx/len,y:p.y+d*vy/len}}
+function lineIntersection(p1,p2,p3,p4){var den=(p1.x-p2.x)*(p3.y-p4.y)-(p1.y-p2.y)*(p3.x-p4.x);if(!den)return{x:(p2.x+p3.x)/2,y:(p2.y+p3.y)/2};return{x:((p1.x*p2.y-p1.y*p2.x)*(p3.x-p4.x)-(p1.x-p2.x)*(p3.x*p4.y-p3.y*p4.x))/den,y:((p1.x*p2.y-p1.y*p2.x)*(p3.y-p4.y)-(p1.y-p2.y)*(p3.x*p4.y-p3.y*p4.x))/den}}
+function describeArc(x,y,r,a1,a2){var s=polar(a1,r,x,y),e=polar(a2,r,x,y),large=Math.abs(a2-a1)<=180?0:1,sweep=a2>a1?0:1;return 'M '+s.x+' '+s.y+' A '+r+' '+r+' 0 '+large+' '+sweep+' '+e.x+' '+e.y}
+function angleArc(v,p1,p2,r){var a1=Math.atan2(-(p1.y-v.y),p1.x-v.x),a2=Math.atan2(-(p2.y-v.y),p2.x-v.x),d=a2-a1;while(d<=-Math.PI)d+=2*Math.PI;while(d>Math.PI)d-=2*Math.PI;var s={x:v.x+r*Math.cos(a1),y:v.y-r*Math.sin(a1)},e={x:v.x+r*Math.cos(a1+d),y:v.y-r*Math.sin(a1+d)},sw=d>0?0:1;return{d:'M '+s.x+' '+s.y+' A '+r+' '+r+' 0 0 '+sw+' '+e.x+' '+e.y,mid:{x:v.x+(r+14)*Math.cos(a1+d/2),y:v.y-(r+14)*Math.sin(a1+d/2)}}}
+function addLine(svg,p1,p2,color,w,dash){var e=document.createElementNS(svgNS,'line');e.setAttribute('x1',p1.x);e.setAttribute('y1',p1.y);e.setAttribute('x2',p2.x);e.setAttribute('y2',p2.y);e.setAttribute('stroke',color||'#2c3e50');e.setAttribute('stroke-width',w||2);e.setAttribute('stroke-linecap','round');if(dash)e.setAttribute('stroke-dasharray',dash);svg.appendChild(e)}
+function addCircle(svg,c,r,stroke,w,fill){var e=document.createElementNS(svgNS,'circle');e.setAttribute('cx',c.x);e.setAttribute('cy',c.y);e.setAttribute('r',r);e.setAttribute('stroke',stroke||'#2c3e50');e.setAttribute('stroke-width',w||2);e.setAttribute('fill',fill||'none');svg.appendChild(e)}
+function addPoint(svg,p,color,r){var e=document.createElementNS(svgNS,'circle');e.setAttribute('cx',p.x);e.setAttribute('cy',p.y);e.setAttribute('r',r||3.2);e.setAttribute('fill',color||'#2c3e50');svg.appendChild(e)}
+function addText(svg,x,y,t,color,size,weight){var e=document.createElementNS(svgNS,'text');e.setAttribute('x',x);e.setAttribute('y',y);e.setAttribute('fill',color||'#2c3e50');e.setAttribute('font-size',size||'15');e.setAttribute('font-weight',weight||'500');e.setAttribute('text-anchor','middle');e.setAttribute('dominant-baseline','middle');e.textContent=t;svg.appendChild(e)}
+function addPath(svg,d,stroke,w,fill){var e=document.createElementNS(svgNS,'path');e.setAttribute('d',d);e.setAttribute('stroke',stroke||'#2c3e50');e.setAttribute('stroke-width',w||2);e.setAttribute('fill',fill||'none');e.setAttribute('stroke-linecap','round');svg.appendChild(e)}
+function addAngle(svg,v,p1,p2,label,r,color){var a=angleArc(v,p1,p2,r||22);addPath(svg,a.d,color||'#2c3e50',1.4);addText(svg,a.mid.x,a.mid.y,label,color||'#2c3e50','14')}
+function addRightAngle(svg,a,b,c,size,color){size=size||12;color=color||'red';var u1={x:a.x-b.x,y:a.y-b.y},u2={x:c.x-b.x,y:c.y-b.y},n1=Math.hypot(u1.x,u1.y)||1,n2=Math.hypot(u2.x,u2.y)||1,p1={x:b.x+size*u1.x/n1,y:b.y+size*u1.y/n1},p2={x:p1.x+size*u2.x/n2,y:p1.y+size*u2.y/n2},p3={x:b.x+size*u2.x/n2,y:b.y+size*u2.y/n2};addPath(svg,'M '+p1.x+' '+p1.y+' L '+p2.x+' '+p2.y+' L '+p3.x+' '+p3.y,color,1.6)}
+function addTicks(svg,p1,p2,count,color){var mx=(p1.x+p2.x)/2,my=(p1.y+p2.y)/2,dx=p2.x-p1.x,dy=p2.y-p1.y,len=Math.hypot(dx,dy)||1,px=-dy/len,py=dx/len,ux=dx/len,uy=dy/len,offs=(count||1)===1?[0]:[-6,6];offs.forEach(function(o){var x=mx+o*ux,y=my+o*uy;addLine(svg,{x:x-5*px,y:y-5*py},{x:x+5*px,y:y+5*py},color||'#2c3e50',1.6)})}
+function renderFigure(id,spec){var svg=$(id);if(!svg||!spec)return;svg.innerHTML='';svg.setAttribute('viewBox',spec.viewBox||'0 0 360 360');if(spec.circle)addCircle(svg,spec.circle.center,spec.circle.r,spec.circle.color||'#2c3e50',spec.circle.width||2);(spec.paths||[]).forEach(function(p){addPath(svg,p.d,p.color||'#2c3e50',p.width||2,p.fill||'none')});(spec.lines||[]).forEach(function(l){addLine(svg,spec.points[l.a],spec.points[l.b],l.color||'#2c3e50',l.width||2,l.dash||'')});(spec.ticks||[]).forEach(function(t){addTicks(svg,spec.points[t.a],spec.points[t.b],t.count||1,t.color||'#2c3e50')});(spec.angles||[]).forEach(function(a){addAngle(svg,spec.points[a.v],spec.points[a.a],spec.points[a.b],a.label,a.r||22,a.color||'#2c3e50')});(spec.rightAngles||[]).forEach(function(r){addRightAngle(svg,spec.points[r.a],spec.points[r.v],spec.points[r.b],r.size||12,r.color||'red')});Object.keys(spec.points||{}).forEach(function(k){var p=spec.points[k];if(p.show!==false)addPoint(svg,p,p.pointColor||'#2c3e50',p.pr||3.2)});(spec.labels||[]).forEach(function(l){addText(svg,l.x,l.y,l.text,l.color||'#2c3e50',l.size||'15',l.weight||'500')})}
+function baseLabels(points,names,c){c=c||{x:cx,y:cy};return names.map(function(n){var p=points[n],lp=n==='O'?{x:p.x,y:p.y+16}:labelPos(p,c,18);return{x:lp.x,y:lp.y,text:n}})}
+function angleChoices(ans,min,max){var step=ri(min||3,max||8),vals=[ans-2*step,ans-step,ans,ans+step].filter(function(v){return v>0});while(vals.length<4)vals.push(vals[vals.length-1]+step);vals=[].concat(vals.filter(function(v,i,a){return a.indexOf(v)===i})).slice(0,4).sort(function(a,b){return a-b});return{choices:vals.map(function(v){return{tex:String(v)+'\u00B0'}}),correctIndex:vals.indexOf(ans)}}
+function numericChoices(ans,unit){var vals=[Math.max(1,ans-1),ans,ans+1,ans+2].sort(function(a,b){return a-b}).map(function(v){return{tex:String(v)+(unit||'')}});return{choices:vals,correctIndex:vals.findIndex(function(v){return v.tex===String(ans)+(unit||'')})}}
+function mk(d){if(!d.choices){var mc=angleChoices(d.answer,d.stepMin||3,d.stepMax||8);d.choices=mc.choices;d.correctIndex=mc.correctIndex}d.points=1;return d}
+
+function g1() {
+  var a=ri(25,40),b=ri(55,75),d=ri(25,40),abc=a+b,bcd=b+d,t=ri(1,3),tilt=ri(-25,25),thB=90+tilt,thA=thB+180-2*a,thC=thB-180+2*b,thD=thC-180+2*d;
+  var pts={O:{x:cx,y:cy},A:polar(thA),B:polar(thB),C:polar(thC),D:polar(thD)};
+  var target='',given='',ans=0,rows=[];
+  if(t===1){target=A('ABC');given='\\('+A('BAO')+'='+DEG(a)+'\\), \\('+A('BCD')+'='+DEG(bcd)+'\\), and \\('+A('CDO')+'='+DEG(d)+'\\)';ans=abc;rows=[row('OC = OD',rad()),row(A('OCD')+' = '+A('CDO')+' = '+DEG(d),iso(tri('COD'))),gap(),row(A('OCB')+' = '+A('BCD')+' - '+A('OCD')),row('= '+DEG(bcd)+' - '+DEG(d)),row('= '+DEG(b)),gap(),row('OB = OC',rad()),row(A('OBC')+' = '+A('OCB')+' = '+DEG(b),iso(tri('BOC'))),gap(),row('OA = OB',rad()),row(A('OBA')+' = '+A('BAO')+' = '+DEG(a),iso(tri('AOB'))),gap(),row(A('ABC')+' = '+A('OBA')+' + '+A('OBC')),row('= '+DEG(a)+' + '+DEG(b)),row('= '+DEG(ans))]}
+  if(t===2){target=A('BCD');given='\\('+A('ABC')+'='+DEG(abc)+'\\), \\('+A('BAO')+'='+DEG(a)+'\\), and \\('+A('CDO')+'='+DEG(d)+'\\)';ans=bcd;rows=[row('OA = OB',rad()),row(A('OBA')+' = '+A('BAO')+' = '+DEG(a),iso(tri('AOB'))),gap(),row(A('OBC')+' = '+A('ABC')+' - '+A('OBA')),row('= '+DEG(abc)+' - '+DEG(a)),row('= '+DEG(b)),gap(),row('OB = OC',rad()),row(A('OCB')+' = '+A('OBC')+' = '+DEG(b),iso(tri('BOC'))),gap(),row('OC = OD',rad()),row(A('OCD')+' = '+A('CDO')+' = '+DEG(d),iso(tri('COD'))),gap(),row(A('BCD')+' = '+A('OCB')+' + '+A('OCD')),row('= '+DEG(b)+' + '+DEG(d)),row('= '+DEG(ans))]}
+  if(t===3){target=A('CDO');given='\\('+A('ABC')+'='+DEG(abc)+'\\), \\('+A('BCD')+'='+DEG(bcd)+'\\), and \\('+A('BAO')+'='+DEG(a)+'\\)';ans=d;rows=[row('OA = OB',rad()),row(A('OBA')+' = '+A('BAO')+' = '+DEG(a),iso(tri('AOB'))),gap(),row(A('OBC')+' = '+A('ABC')+' - '+A('OBA')),row('= '+DEG(abc)+' - '+DEG(a)),row('= '+DEG(b)),gap(),row('OB = OC',rad()),row(A('OCB')+' = '+A('OBC')+' = '+DEG(b),iso(tri('BOC'))),gap(),row(A('OCD')+' = '+A('BCD')+' - '+A('OCB')),row('= '+DEG(bcd)+' - '+DEG(b)),row('= '+DEG(ans)),gap(),row('OC = OD',rad()),row(A('CDO')+' = '+A('OCD')+' = '+DEG(ans),iso(tri('COD')))]}
+  var angles=[{a:'O',v:'A',b:'B',label:String(a)+'\u00B0',r:24}];
+  if(t===1)angles.push({a:'B',v:'C',b:'D',label:String(bcd)+'\u00B0',r:18},{a:'C',v:'D',b:'O',label:String(d)+'\u00B0',r:22});
+  if(t===2)angles.push({a:'A',v:'B',b:'C',label:String(abc)+'\u00B0',r:18},{a:'C',v:'D',b:'O',label:String(d)+'\u00B0',r:22});
+  if(t===3)angles.push({a:'A',v:'B',b:'C',label:String(abc)+'\u00B0',r:18},{a:'B',v:'C',b:'D',label:String(bcd)+'\u00B0',r:18});
+  var fig={points:pts,circle:{center:pts.O,r:R},lines:[{a:'O',b:'A'},{a:'A',b:'B'},{a:'B',b:'C'},{a:'C',b:'D'},{a:'D',b:'O'}],labels:baseLabels(pts,['O','A','B','C','D']),angles:angles};
+  var sfig=JSON.parse(JSON.stringify(fig));
+  sfig.lines=sfig.lines.concat([{a:'O',b:'B',color:'red'},{a:'O',b:'C',color:'red'}]);
+  return mk({typeId:'circle_i',promptHtml:'In the figure, \\(O\\) is the centre of the circle \\(ABCD\\). If '+given+', find \\('+target+'\\).',promptText:'Circle centre question',answer:ans,figure:fig,solutionFigure:sfig,solutionRows:rows});
+}
+
+function g2() {
+  var x=ri(25,45),ans=90-x,t=ri(1,3),tilt=ri(-20,20),thA=90+tilt,thC=270+tilt,valADE=t===1?x:ans,thE=thA-2*valADE,thD=thE-ri(20,50),thB=thA+ri(30,150);
+  var pts={O:{x:cx,y:cy,show:false},A:polar(thA),B:polar(thB),C:polar(thC),D:polar(thD),E:polar(thE)};
+  var target='',given='',rows=[];
+  if(t===1){target=A('CBE');given='\\('+A('ADE')+'='+DEG(x)+'\\)';rows=[row(A('ACE')+' = '+A('ADE')+' = '+DEG(x),sameSeg()),gap(),row(A('AEC')+' = '+DEG(90),'\u2220 in semi-circle'),gap(),row('In '+tri('ACE')+':'),row(A('CAE')+' + '+A('ACE')+' + '+A('AEC')+' = '+DEG(180),sumTri(tri('ACE'))),row(A('CAE')+' + '+DEG(x)+' + '+DEG(90)+' = '+DEG(180)),row(A('CAE')+' = '+DEG(ans)),gap(),row(A('CBE')+' = '+A('CAE')+' = '+DEG(ans),sameSeg())]}
+  if(t===2){target=A('ADE');given='\\('+A('CBE')+'='+DEG(x)+'\\)';rows=[row(A('CAE')+' = '+A('CBE')+' = '+DEG(x),sameSeg()),gap(),row(A('AEC')+' = '+DEG(90),'\u2220 in semi-circle'),gap(),row('In '+tri('ACE')+':'),row(A('ACE')+' + '+A('CAE')+' + '+A('AEC')+' = '+DEG(180),sumTri(tri('ACE'))),row(A('ACE')+' + '+DEG(x)+' + '+DEG(90)+' = '+DEG(180)),row(A('ACE')+' = '+DEG(ans)),gap(),row(A('ADE')+' = '+A('ACE')+' = '+DEG(ans),sameSeg())]}
+  if(t===3){target=A('ACE');given='\\('+A('CBE')+'='+DEG(x)+'\\)';rows=[row(A('CAE')+' = '+A('CBE')+' = '+DEG(x),sameSeg()),gap(),row(A('AEC')+' = '+DEG(90),'\u2220 in semi-circle'),gap(),row('In '+tri('ACE')+':'),row(A('ACE')+' + '+A('CAE')+' + '+A('AEC')+' = '+DEG(180),sumTri(tri('ACE'))),row(A('ACE')+' + '+DEG(x)+' + '+DEG(90)+' = '+DEG(180)),row(A('ACE')+' = '+DEG(ans))]}
+  var angles=t===1?[{a:'E',v:'D',b:'A',label:String(x)+'\u00B0',r:20}]:[{a:'C',v:'B',b:'E',label:String(x)+'\u00B0',r:20}];
+  var fig={points:pts,circle:{center:{x:cx,y:cy},r:R},lines:[{a:'A',b:'C'},{a:'A',b:'D'},{a:'B',b:'E'},{a:'B',b:'C'},{a:'D',b:'E'}],labels:baseLabels(pts,['A','B','C','D','E']),angles:angles};
+  var sfig=JSON.parse(JSON.stringify(fig));
+  sfig.lines=sfig.lines.concat([{a:'A',b:'E',color:'red'},{a:'C',b:'E',color:'red'}]);
+  sfig.rightAngles=[{a:'A',v:'E',b:'C'}];
+  return mk({typeId:'circle_ii',promptHtml:'In the figure, \\(AC\\) is a diameter of the circle \\(ABCDE\\). If '+given+', find \\('+target+'\\).',promptText:'Diameter question',answer:ans,figure:fig,solutionFigure:sfig,solutionRows:rows});
+}
+
+function g3() {
+    var half = ri(15, 37), bad = 2 * half, cad = half;
+    var adc = 90 - cad, aec = adc, abc = 180 - adc;
+    var t = ri(1, 3), tilt = ri(-25, 25);
+    var thD = tilt, thA = 180 + tilt, thC = thD + 2 * cad, thB = thC + 2 * cad, thE = tilt + ri(210, 330);
+    
+    var pts = {
+        O: { x: cx, y: cy, show: false },
+        A: polar(thA), B: polar(thB), C: polar(thC), D: polar(thD), E: polar(thE)
+    };
+    
+    var target = '', given = '', ans = 0, rows = [];
+    
+    if (t === 1) {
+        target = '\\angle AEC';
+        given = `\\(\\angle BAD=${bad}^{\\circ}\\)`;
+        ans = aec;
+        rows = [
+            row('Join AC.'), gap(),
+            row('BC = CD', 'given'),
+            row(`\u2220CAD = \u2220CAB = ${cad}\xB0`, 'equal chords, equal \u2220s'), gap(),
+            row('\u2220ACD = 90\xB0', '\u2220 in semi-circle'), gap(),
+            row('In \u25B3ACD:'),
+            row('\u2220ADC + \u2220CAD + \u2220ACD = 180\xB0', '\u2220 sum of \u25B3'),
+            row(`\u2220ADC + ${cad}\xB0 + 90\xB0 = 180\xB0`),
+            row(`\u2220ADC = ${adc}\xB0`), gap(),
+            row(`\u2220AEC = \u2220ADC = ${ans}\xB0`, '\u2220s in same segment')
+        ];
+    }
+    if (t === 2) {
+        target = '\\angle BAD';
+        given = `\\(\\angle AEC=${aec}^{\\circ}\\)`;
+        ans = bad;
+        rows = [
+            row('Join AC.'), gap(),
+            row(`\u2220ADC = \u2220AEC = ${aec}\xB0`, '\u2220s in same segment'), gap(),
+            row('\u2220ACD = 90\xB0', '\u2220 in semi-circle'), gap(),
+            row('In \u25B3ACD:'),
+            row('\u2220CAD + \u2220ADC + \u2220ACD = 180\xB0', '\u2220 sum of \u25B3'),
+            row(`\u2220CAD + ${aec}\xB0 + 90\xB0 = 180\xB0`),
+            row(`\u2220CAD = ${cad}\xB0`), gap(),
+            row('BC = CD', 'given'),
+            row('\u2220BAD = 2\u2220CAD', 'arcs prop. to \u2220s at centre'),
+            row(`= ${ans}\xB0`)
+        ];
+    }
+    if (t === 3) {
+        target = '\\angle ABC';
+        given = `\\(\\angle BAD=${bad}^{\\circ}\\)`;
+        ans = abc;
+        rows = [
+            row('Join AC.'), gap(),
+            row('BC = CD', 'given'),
+            row(`\u2220CAD = \u2220CAB = ${cad}\xB0`, 'equal chords, equal \u2220s'), gap(),
+            row('\u2220ACD = 90\xB0', '\u2220 in semi-circle'), gap(),
+            row('In \u25B3ACD:'),
+            row('\u2220ADC + \u2220CAD + \u2220ACD = 180\xB0', '\u2220 sum of \u25B3'),
+            row(`\u2220ADC + ${cad}\xB0 + 90\xB0 = 180\xB0`),
+            row(`\u2220ADC = ${adc}\xB0`), gap(),
+            row('In ABCD:'),
+            row('\u2220ABC + \u2220ADC = 180\xB0', 'opp. \u2220s, cyclic quad.'),
+            row(`\u2220ABC = ${ans}\xB0`)
+        ];
+    }
+    
+    var angles = t === 2 
+        ? [{ a: 'C', v: 'E', b: 'A', label: `${aec}\xB0`, r: 20 }] 
+        : [{ a: 'D', v: 'A', b: 'B', label: `${bad}\xB0`, r: 20 }];
+        
+    var fig = {
+        points: pts,
+        circle: { center: { x: cx, y: cy }, r: R },
+        lines: [
+            { a: 'A', b: 'D' }, { a: 'A', b: 'B' }, { a: 'B', b: 'C' },
+            { a: 'C', b: 'D' }, { a: 'A', b: 'E' }, { a: 'E', b: 'C' }
+        ],
+        ticks: [{ a: 'B', b: 'C', count: 2 }, { a: 'C', b: 'D', count: 2 }],
+        labels: baseLabels(pts, ['A', 'B', 'C', 'D', 'E']),
+        angles: angles
+    };
+    
+    var sfig = JSON.parse(JSON.stringify(fig));
+    sfig.lines = fig.lines.concat([{ a: 'A', b: 'C', color: 'red' }]);
+    sfig.rightAngles = [{ a: 'A', v: 'C', b: 'D' }];
+    
+    return mk({
+        typeId: 'circle_iii',
+        promptHtml: `In the figure, \\(AD\\) is a diameter of the circle \\(ABCDE\\) and \\(BC=CD\\). If ${given}, find \\(${target}\\).`,
+        answer: ans,
+        figure: fig,
+        solutionFigure: sfig,
+        solutionRows: rows
+    });
+}
+
+function g4() {
+    var half = ri(50, 65), x = 2 * half;
+    var bcd = 180 - x, cde = 180 - x, bed = bcd / 2;
+    var ced = 180 - x, ceb = ced - bed, ansDFE = 1.5 * x - 90;
+    var t = ri(1, 2), tilt = ri(-20, 20);
+    var thD = tilt, thB = thD - 180 + x, thE = thD + 2 * x - 180;
+    
+    var pts = {
+        C: { x: cx, y: cy },
+        D: polar(thD), B: polar(thB), E: polar(thE)
+    };
+    pts.A = { x: pts.B.x + pts.D.x - cx, y: pts.B.y + pts.D.y - cy };
+    pts.F = lineIntersection(pts.C, pts.D, pts.B, pts.E);
+    
+    var target = '', ans = 0, rows = [];
+    
+    if (t === 1) {
+        target = '\\angle DFE';
+        ans = ansDFE;
+        rows = [
+            row('\u2220BCD = 180\xB0 - \u2220ADC', 'int. \u2220s, BC // AD'),
+            row(`= 180\xB0 - ${x}\xB0 = ${bcd}\xB0`), gap(),
+            row('\u2220CDE = 180\xB0 - \u2220ADC', 'adj. \u2220s on st. line'),
+            row(`= 180\xB0 - ${x}\xB0 = ${cde}\xB0`), gap(),
+            row(`\u2220BED = 1/2\u2220BCD = ${bed}\xB0`, '\u2220 at centre twice \u2220 at circumference'), gap(),
+            row('In \u25B3DEF:'),
+            row('\u2220DFE + \u2220EDF + \u2220DEF = 180\xB0', '\u2220 sum of \u25B3'),
+            row(`\u2220DFE + ${cde}\xB0 + ${bed}\xB0 = 180\xB0`),
+            row(`\u2220DFE = ${ans}\xB0`)
+        ];
+    } else {
+        target = '\\angle CEB';
+        ans = ceb;
+        rows = [
+            row('\u2220BCD = 180\xB0 - \u2220ADC', 'int. \u2220s, BC // AD'),
+            row(`= 180\xB0 - ${x}\xB0 = ${bcd}\xB0`), gap(),
+            row('\u2220CDE = 180\xB0 - \u2220ADC', 'adj. \u2220s on st. line'),
+            row(`= 180\xB0 - ${x}\xB0 = ${cde}\xB0`), gap(),
+            row('CD = CE', 'radii'),
+            row(`\u2220CED = \u2220CDE = ${cde}\xB0`, 'base \u2220s, isos. \u25B3'), gap(),
+            row(`\u2220BED = 1/2\u2220BCD = ${bed}\xB0`, '\u2220 at centre twice \u2220 at circumference'), gap(),
+            row('\u2220CEB = \u2220CED - \u2220BED'),
+            row(`= ${ced}\xB0 - ${bed}\xB0`),
+            row(`= ${ans}\xB0`)
+        ];
+    }
+    
+    var fig = {
+        points: pts,
+        circle: { center: pts.C, r: R },
+        lines: [
+            { a: 'C', b: 'D' }, { a: 'D', b: 'A' }, { a: 'A', b: 'B' },
+            { a: 'B', b: 'C' }, { a: 'D', b: 'E' }, { a: 'B', b: 'E' }, { a: 'C', b: 'E' }
+        ],
+        labels: [{ x: pts.C.x - 16, y: pts.C.y, text: 'C' }].concat(baseLabels(pts, ['A', 'B', 'D', 'E'], pts.C)),
+        angles: [{ a: 'A', v: 'D', b: 'C', label: `${x}\xB0`, r: 18 }]
+    };
+    
+    return mk({
+        typeId: 'circle_iv',
+        promptHtml: `In the figure, \\(ABCD\\) is a rhombus. \\(C\\) is the centre of the circle \\(BDE\\) and \\(ADE\\) is a straight line. \\(BE\\) and \\(CD\\) intersect at the point \\(F\\). If \\(\\angle ADC=${x}^{\\circ}\\), find \\(${target}\\).`,
+        answer: ans,
+        figure: fig,
+        solutionFigure: fig,
+        solutionRows: rows
+    });
+}
+
+function g5() {
+  var c=ri(15,40),adc=90-c,abc=180-adc,bad=2*c,bed=bad,t=ri(1,3),tilt=ri(-25,25),thD=tilt,thA=180+tilt,thC=thD+2*c,thB=thC+2*c,thE=thA+ri(30,150);
+  var pts={O:{x:cx,y:cy,show:false},A:polar(thA),B:polar(thB),C:polar(thC),D:polar(thD),E:polar(thE)};
+  var target='',given='',ans=0,rows=[];
+  if(t===1){target=A('BED');given='\\('+A('ABC')+'='+DEG(abc)+'\\)';ans=bed;rows=[row('In ABCD:'),row(A('ABC')+' + '+A('ADC')+' = '+DEG(180),oppCyclic()),row(A('ADC')+' = '+DEG(adc)),gap(),row(A('ACD')+' = '+DEG(90),'\u2220 in semi-circle'),gap(),row('In '+tri('ACD')+':'),row(A('CAD')+' + '+A('ACD')+' + '+A('ADC')+' = '+DEG(180),sumTri(tri('ACD'))),row(A('CAD')+' = '+DEG(c)),gap(),row(A('BAC')+' = '+A('CAD')+' = '+DEG(c),'equal chords, equal angles'),row(A('BAD')+' = '+A('BAC')+' + '+A('CAD')),row('= '+DEG(bad)),gap(),row(A('BED')+' = '+A('BAD')+' = '+DEG(ans),sameSeg())]}
+  if(t===2){target=A('ABC');given='\\('+A('BED')+'='+DEG(bed)+'\\)';ans=abc;rows=[row(A('BAD')+' = '+A('BED')+' = '+DEG(bed),sameSeg()),gap(),row(A('BAC')+' = '+A('CAD'),'equal chords, equal angles'),row(A('BAD')+' = '+A('BAC')+' + '+A('CAD')),row(A('CAD')+' = '+DEG(c)),gap(),row(A('ACD')+' = '+DEG(90),'\u2220 in semi-circle'),gap(),row('In '+tri('ACD')+':'),row(A('ADC')+' + '+A('ACD')+' + '+A('CAD')+' = '+DEG(180),sumTri(tri('ACD'))),row(A('ADC')+' = '+DEG(adc)),gap(),row('In ABCD:'),row(A('ABC')+' + '+A('ADC')+' = '+DEG(180),oppCyclic()),row(A('ABC')+' = '+DEG(ans))]}
+  if(t===3){target=A('CAD');given='\\('+A('BED')+'='+DEG(bed)+'\\)';ans=c;rows=[row(A('BAD')+' = '+A('BED')+' = '+DEG(bed),sameSeg()),gap(),row(A('BAC')+' = '+A('CAD'),'equal chords, equal angles'),row(A('BAD')+' = '+A('BAC')+' + '+A('CAD')),row(DEG(bed)+' = '+A('CAD')+' + '+A('CAD')),row(A('CAD')+' = '+DEG(ans))]}
+  var angles=t===1?[{a:'A',v:'B',b:'C',label:String(abc)+'\u00B0',r:20}]:[{a:'D',v:'E',b:'B',label:String(bed)+'\u00B0',r:20}];
+  var fig={points:pts,circle:{center:{x:cx,y:cy},r:R},lines:[{a:'A',b:'B'},{a:'B',b:'C'},{a:'C',b:'D'},{a:'D',b:'A'},{a:'B',b:'E'},{a:'D',b:'E'}],ticks:[{a:'B',b:'C',count:2},{a:'C',b:'D',count:2}],labels:baseLabels(pts,['A','B','C','D','E']),angles:angles};
+  var sfig=JSON.parse(JSON.stringify(fig));
+  sfig.lines=sfig.lines.concat([{a:'A',b:'C',color:'red'}]);
+  sfig.rightAngles=[{a:'A',v:'C',b:'D'}];
+  return mk({typeId:'circle_v',promptHtml:'In the figure, \\(AD\\) is a diameter of the circle \\(ABCDE\\). If \\(BC=CD\\) and '+given+', find \\('+target+'\\).',promptText:'Equal chords and diameter question',answer:ans,figure:fig,solutionFigure:sfig,solutionRows:rows});
+}
+
+function g6() {
+    var z = ri(20, 32), x = ri(25, 45), y = 180 - 3 * z - x;
+    var t = ri(1, 3), thA = 120 + ri(-30, 30);
+    var thD = thA - 2 * x, thC = thD - 2 * z, thB = thC - 2 * y;
+    
+    var pts = { A: polar(thA), D: polar(thD), C: polar(thC), B: polar(thB) };
+    pts.E = lineIntersection(pts.A, pts.D, pts.B, pts.C);
+    
+    var target = '', given = '', ans = 0, rows = [];
+    
+    if (t === 1) {
+        target = '\\angle CED';
+        given = `\\(\\angle BAC=${y}^{\\circ}\\) and \\(\\angle ABD=${x}^{\\circ}\\)`;
+        ans = z;
+        rows = [
+            row('Let \u2220CED = z.'), gap(),
+            row('In \u25B3BDE:'),
+            row('BD = DE', 'given'),
+            row('\u2220DBE = \u2220CED = z', 'base \u2220s, isos. \u25B3'), gap(),
+            row('\u2220BDA = \u2220DBE + \u2220CED', 'ext. \u2220 of \u25B3'),
+            row('= 2z'), gap(),
+            row('\u2220BCA = \u2220BDA = 2z', '\u2220s in the same segment'), gap(),
+            row('In \u25B3ABC:'),
+            row('\u2220BAC + \u2220ABC + \u2220BCA = 180\xB0', '\u2220 sum of \u25B3'),
+            row(`${y}\xB0 + (${x}\xB0 + z) + 2z = 180\xB0`),
+            row(`z = ${ans}\xB0`), gap(),
+            row(`\u2220CED = ${ans}\xB0`)
+        ];
+    }
+    if (t === 2) {
+        target = '\\angle BAC';
+        given = `\\(\\angle CED=${z}^{\\circ}\\) and \\(\\angle ABD=${x}^{\\circ}\\)`;
+        ans = y;
+        rows = [
+            row('In \u25B3BDE:'),
+            row('BD = DE', 'given'),
+            row(`\u2220DBE = \u2220CED = ${z}\xB0`, 'base \u2220s, isos. \u25B3'), gap(),
+            row('\u2220BDA = \u2220DBE + \u2220CED', 'ext. \u2220 of \u25B3'),
+            row(`= ${2 * z}\xB0`), gap(),
+            row(`\u2220BCA = \u2220BDA = ${2 * z}\xB0`, '\u2220s in the same segment'), gap(),
+            row('In \u25B3ABC:'),
+            row('\u2220BAC + \u2220ABC + \u2220BCA = 180\xB0', '\u2220 sum of \u25B3'),
+            row(`\u2220BAC + (${x}\xB0 + ${z}\xB0) + ${2 * z}\xB0 = 180\xB0`),
+            row(`\u2220BAC = ${ans}\xB0`)
+        ];
+    }
+    if (t === 3) {
+        target = '\\angle ABD';
+        given = `\\(\\angle BAC=${y}^{\\circ}\\) and \\(\\angle CED=${z}^{\\circ}\\)`;
+        ans = x;
+        rows = [
+            row('In \u25B3BDE:'),
+            row('BD = DE', 'given'),
+            row(`\u2220DBE = \u2220CED = ${z}\xB0`, 'base \u2220s, isos. \u25B3'), gap(),
+            row('\u2220BDA = \u2220DBE + \u2220CED', 'ext. \u2220 of \u25B3'),
+            row(`= ${2 * z}\xB0`), gap(),
+            row(`\u2220BCA = \u2220BDA = ${2 * z}\xB0`, '\u2220s in the same segment'), gap(),
+            row('In \u25B3ABC:'),
+            row('\u2220BAC + \u2220ABC + \u2220BCA = 180\xB0', '\u2220 sum of \u25B3'),
+            row(`${y}\xB0 + (\u2220ABD + ${z}\xB0) + ${2 * z}\xB0 = 180\xB0`),
+            row(`\u2220ABD = ${ans}\xB0`)
+        ];
+    }
+    
+    var lines = [
+        { a: 'A', b: 'E' }, { a: 'B', b: 'E' }, { a: 'A', b: 'B' },
+        { a: 'C', b: 'D' }, { a: 'B', b: 'D' }
+    ];
+    if (t !== 2) lines.push({ a: 'A', b: 'C' });
+    
+    var angles = [];
+    if (t === 1) angles.push({ a: 'B', v: 'A', b: 'C', label: `${y}\xB0`, r: 20 }, { a: 'D', v: 'B', b: 'A', label: `${x}\xB0`, r: 18 });
+    if (t === 2) angles.push({ a: 'D', v: 'E', b: 'C', label: `${z}\xB0`, r: 20 }, { a: 'D', v: 'B', b: 'A', label: `${x}\xB0`, r: 18 });
+    if (t === 3) angles.push({ a: 'B', v: 'A', b: 'C', label: `${y}\xB0`, r: 20 }, { a: 'D', v: 'E', b: 'C', label: `${z}\xB0`, r: 20 });
+    
+    var fig = {
+        points: pts,
+        circle: { center: { x: cx, y: cy }, r: R },
+        lines: lines,
+        ticks: [{ a: 'B', b: 'D', count: 2 }, { a: 'D', b: 'E', count: 2 }],
+        labels: baseLabels(pts, ['A', 'B', 'C', 'D']).concat([{ x: pts.E.x + 12, y: pts.E.y, text: 'E' }]),
+        angles: angles
+    };
+    
+    var sfig = JSON.parse(JSON.stringify(fig));
+    if (t === 2 && !sfig.lines.some(function(l) { return l.a === 'A' && l.b === 'C'; })) {
+        sfig.lines.push({ a: 'A', b: 'C', color: 'red' });
+    }
+    
+    return mk({
+        typeId: 'circle_vi',
+        promptHtml: `In the figure, \\(ABCD\\) is a circle. \\(AD\\) produced and \\(BC\\) produced meet at the point \\(E\\). It is given that \\(BD = DE\\) and ${given}. Find \\(${target}\\).`,
+        answer: ans,
+        figure: fig,
+        solutionFigure: sfig,
+        solutionRows: rows
+    });
+}
+
+function g7() {
+  var abd=ri(20,40),aod=2*abd,cod=180-2*aod,bdc=abd,t=ri(1,3),thB=0,thC=thB+aod,thD=thC+cod,thA=180;
+  var pts={O:{x:cx,y:cy},A:polar(thA),B:polar(thB),C:polar(thC),D:polar(thD)};
+  var target='',given='',ans=0,rows=[];
+  if(t===1){target=A('ABD');given='\\('+A('COD')+'='+DEG(cod)+'\\)';ans=abd;rows=[row('AC = BD','given'),row(arc('AC')+' = '+arc('BD'),'equal chords, equal arcs'),gap(),row(arc('AD')+' = '+arc('BC')),gap(),row(A('AOD')+' = '+A('BOC'),'equal arcs, equal angles'),gap(),row(A('AOD')+' + '+A('COD')+' + '+A('BOC')+' = '+DEG(180),'adj. \u2220s on st. line'),row(A('AOD')+' + '+DEG(cod)+' + '+A('AOD')+' = '+DEG(180)),row(A('AOD')+' = '+DEG(aod)),gap(),row(A('ABD')+' = 1/2 '+A('AOD'),centerTwice()),row('= '+DEG(ans))]}
+  if(t===2){target=A('COD');given='\\('+A('ABD')+'='+DEG(abd)+'\\)';ans=cod;rows=[row(A('AOD')+' = 2 '+A('ABD')+' = '+DEG(aod),centerTwice()),gap(),row('AC = BD','given'),row(arc('AC')+' = '+arc('BD'),'equal chords, equal arcs'),gap(),row(arc('AD')+' = '+arc('BC')),gap(),row(A('BOC')+' = '+A('AOD')+' = '+DEG(aod),'equal arcs, equal angles'),gap(),row(A('AOD')+' + '+A('COD')+' + '+A('BOC')+' = '+DEG(180),'adj. \u2220s on st. line'),row(A('COD')+' = '+DEG(ans))]}
+  if(t===3){target=A('BDC');given='\\('+A('COD')+'='+DEG(cod)+'\\)';ans=bdc;rows=[row('AC = BD','given'),row(arc('AC')+' = '+arc('BD'),'equal chords, equal arcs'),gap(),row(arc('AD')+' = '+arc('BC')),gap(),row(A('AOD')+' = '+A('BOC'),'equal arcs, equal angles'),gap(),row(A('AOD')+' + '+A('COD')+' + '+A('BOC')+' = '+DEG(180),'adj. \u2220s on st. line'),row(A('BOC')+' = '+DEG(aod)),gap(),row(A('BDC')+' = 1/2 '+A('BOC'),centerTwice()),row('= '+DEG(ans))]}
+  var fig={points:pts,paths:[{d:describeArc(cx,cy,R,0,180),width:2}],lines:[{a:'A',b:'B'},{a:'O',b:'C'},{a:'O',b:'D'},{a:'A',b:'C'},{a:'B',b:'D'}].concat(t===3?[{a:'C',b:'D'}]:[]),labels:baseLabels(pts,['O','A','B','C','D']),angles:t===2?[{a:'D',v:'B',b:'A',label:String(abd)+'\u00B0',r:22}]:[{a:'C',v:'O',b:'D',label:String(cod)+'\u00B0',r:22}]};
+  return mk({typeId:'circle_vii',promptHtml:'In the figure, \\(O\\) is the centre of the semi-circle \\(ABCD\\). If \\(AC=BD\\) and '+given+', find \\('+target+'\\).',promptText:'Semicircle and equal chords question',answer:ans,figure:fig,solutionFigure:fig,solutionRows:rows});
+}
+
+function g8() {
+  var AB=ri(8,18),BC=ri(5,12),CED=ri(25,55),ACsq=AB*AB+BC*BC,AC=Math.sqrt(ACsq),t=ri(1,2);
+  var target=t===1?'CD':'AD';
+  var raw=t===1?AC*Math.sin(CED*Math.PI/180):AC*Math.cos(CED*Math.PI/180);
+  var ans=Math.round(raw),tilt=ri(-30,30);
+  var thC=tilt,thA=180+tilt,angBAC=Math.atan(BC/AB)*180/Math.PI,thB=thC+2*angBAC,thD=360+thC-2*CED,arcGap=180-2*CED,thE=thA+(arcGap*ri(30,70)/100);
+  var pts={A:polar(thA),B:polar(thB),C:polar(thC),D:polar(thD),E:polar(thE)};
+  var fig={points:pts,circle:{center:{x:cx,y:cy},r:R},lines:[{a:'A',b:'B'},{a:'B',b:'C'},{a:'C',b:'D'},{a:'D',b:'E'},{a:'C',b:'E'}],labels:baseLabels(pts,['A','B','C','D','E']),angles:[{a:'D',v:'E',b:'C',label:String(CED)+'\u00B0',r:22}],rightAngles:[{a:'A',v:'B',b:'C'}]};
+  var sfig=JSON.parse(JSON.stringify(fig));
+  sfig.lines=sfig.lines.concat([{a:'A',b:'C',color:'red'},{a:'A',b:'D',color:'red'}]);
+  sfig.rightAngles=sfig.rightAngles.concat([{a:'C',v:'D',b:'A',color:'red'}]);
+  var rows=[row('AC is a diameter','converse of \u2220 in semi-circle'),row(A('ADC')+' = '+DEG(90),'\u2220 in semi-circle'),gap(),row(A('CAD')+' = '+A('CED')+' = '+DEG(CED),sameSeg()),gap(),row('In '+tri('ABC')+':'),row('AC\u00B2 = AB\u00B2 + BC\u00B2','Pyth. theorem'),row('AC = \u221A('+AB+'\u00B2 + '+BC+'\u00B2)'),row('= \u221A'+ACsq+' cm'),gap(),row('In '+tri('ACD')+':')];
+  if(t===1){rows.push(row('sin '+A('CAD')+' = CD / AC'),row('CD = AC sin '+A('CAD')),row('= \u221A'+ACsq+' sin '+CED+'\u00B0'),row('\u2248 '+ans+' cm'))}
+  else{rows.push(row('cos '+A('CAD')+' = AD / AC'),row('AD = AC cos '+A('CAD')),row('= \u221A'+ACsq+' cos '+CED+'\u00B0'),row('\u2248 '+ans+' cm'))}
+  var ch=numericChoices(ans,'~cm');
+  return mk({typeId:'circle_viii',promptHtml:'In the figure, \\(ABCDE\\) is a circle. If \\(AB='+AB+'~cm\\), \\(BC='+BC+'~cm\\), \\('+A('ABC')+'=90^{\\circ}\\) and \\('+A('CED')+'='+DEG(CED)+'\\), find '+target+' correct to the nearest cm.',promptText:'Trigonometry in circle question',answer:ans,choices:ch.choices,correctIndex:ch.correctIndex,figure:fig,solutionFigure:sfig,solutionRows:rows,points:1});
+}
+
+function g9() {
+    var x = ri(35, 50);
+    var phi = ri(20, 35);
+    var theta = 2 * x + phi;
+    var acd = 180 - theta;
+    var t = ri(1, 3);
+    var tilt = ri(-30, 30);
+    var thA = 90 + tilt;
+    var thB = thA + 2 * x;
+    var thC = thB + 2 * phi;
+    var thD = thC + 2 * x;
+    var rem = 360 - 4 * x - 2 * phi;
+    var thE = thD + rem * ri(25, 75) / 100;
+    
+    var pts = {
+        A: polar(thA),
+        B: polar(thB),
+        C: polar(thC),
+        D: polar(thD),
+        E: polar(thE)
+    };
+    
+    var target = '';
+    var given = '';
+    var ans = 0;
+    var rows = [];
+    
+    if (t === 1) {
+        target = '\u2220 CAD';
+        given = `\\(\u2220 AED=${theta}^{\\circ}\\) and \\(\u2220 BDC=${phi}^{\\circ}\\)`;
+        ans = x;
+        rows = [
+            row('In ACDE:'),
+            row('∠ACD + ∠AED = 180°', 'opp. ∠s, cyclic quad.'),
+            row(`∠ACD = ${acd}°`),
+            gap(),
+            row('AC = BD', 'given'),
+            row(arc('AC') + ' = ' + arc('BD'), 'equal chords, equal arcs'),
+            row(arc('AB') + ' = ' + arc('CD')),
+            gap(),
+            row('∠ADB = ∠CAD', 'equal arcs, equal ∠s'),
+            gap(),
+            row('In △ACD:'),
+            row('∠CAD + ∠ACD + ∠ADC = 180°', '∠ sum of △'),
+            row(`∠CAD + ${acd}° + (∠CAD + ${phi}°) = 180°`),
+            row(`∠CAD = ${ans}°`)
+        ];
+    }
+    if (t === 2) {
+        target = '\u2220 AED';
+        given = `\\(\u2220 CAD=${x}^{\\circ}\\) and \\(\u2220 BDC=${phi}^{\\circ}\\)`;
+        ans = theta;
+        rows = [
+            row('AC = BD', 'given'),
+            row(arc('AC') + ' = ' + arc('BD'), 'equal chords, equal arcs'),
+            row(arc('AB') + ' = ' + arc('CD')),
+            gap(),
+            row(`∠ADB = ∠CAD = ${x}°`, 'equal arcs, equal ∠s'),
+            gap(),
+            row('In △ACD:'),
+            row('∠CAD + ∠ACD + ∠ADC = 180°', '∠ sum of △'),
+            row(`${x}° + ∠ACD + (${x}° + ${phi}°) = 180°`),
+            row(`∠ACD = ${acd}°`),
+            gap(),
+            row('In ACDE:'),
+            row('∠ACD + ∠AED = 180°', 'opp. ∠s, cyclic quad.'),
+            row(`∠AED = ${ans}°`)
+        ];
+    }
+    if (t === 3) {
+        target = '\u2220 BDC';
+        given = `\\(\u2220 AED=${theta}^{\\circ}\\) and \\(\u2220 CAD=${x}^{\\circ}\\)`;
+        ans = phi;
+        rows = [
+            row('In ACDE:'),
+            row('∠ACD + ∠AED = 180°', 'opp. ∠s, cyclic quad.'),
+            row(`∠ACD = ${acd}°`),
+            gap(),
+            row('AC = BD', 'given'),
+            row(arc('AC') + ' = ' + arc('BD'), 'equal chords, equal arcs'),
+            row(arc('AB') + ' = ' + arc('CD')),
+            gap(),
+            row(`∠ADB = ∠CAD = ${x}°`, 'equal arcs, equal ∠s'),
+            gap(),
+            row('In △ACD:'),
+            row('∠CAD + ∠ACD + ∠ADC = 180°', '∠ sum of △'),
+            row(`${x}° + ${acd}° + (${x}° + ∠BDC) = 180°`),
+            row(`∠BDC = ${ans}°`)
+        ];
+    }
+    
+    var angles = t === 1 
+        ? [{ a: 'A', v: 'E', b: 'D', label: `${theta}°`, r: 20 }, { a: 'B', v: 'D', b: 'C', label: `${phi}°`, r: 24 }] 
+        : t === 2 
+        ? [{ a: 'C', v: 'A', b: 'D', label: `${x}°`, r: 20 }, { a: 'B', v: 'D', b: 'C', label: `${phi}°`, r: 24 }] 
+        : [{ a: 'A', v: 'E', b: 'D', label: `${theta}°`, r: 20 }, { a: 'C', v: 'A', b: 'D', label: `${x}°`, r: 20 }];
+        
+    var fig = {
+        points: pts,
+        circle: { center: { x: cx, y: cy }, r: R },
+        lines: [
+            { a: 'A', b: 'D' }, { a: 'A', b: 'E' }, { a: 'D', b: 'E' },
+            { a: 'C', b: 'D' }, { a: 'C', b: 'A' }, { a: 'B', b: 'D' }
+        ],
+        ticks: [{ a: 'A', b: 'C', count: 2 }, { a: 'B', b: 'D', count: 2 }],
+        labels: baseLabels(pts, ['A', 'B', 'C', 'D', 'E']),
+        angles: angles
+    };
+    
+    var sfig = JSON.parse(JSON.stringify(fig));
+    sfig.lines = fig.lines.concat([
+        { a: 'A', b: 'B', color: 'red' },
+        { a: 'B', b: 'C', color: 'red' }
+    ]);
+    
+    return mk({
+        typeId: 'circle_ix',
+        promptHtml: `In the figure, \\(ABCDE\\) is a circle. If \\(AC = BD\\), ${given}, find \\(${target}\\).`,
+        answer: ans,
+        figure: fig,
+        solutionFigure: sfig,
+        solutionRows: rows
+    });
+}
+
+function g10() {
+    var abo = ri(25, 35);
+    var aco = ri(30, 45);
+    var aob = 180 - 2 * abo;
+    var aoc = 180 - 2 * aco;
+    var boc = 2 * (abo + aco);
+    var bac = abo + aco;
+    var v = ri(1, 3);
+    var tilt = ri(-10, 10);
+    
+    var pts = {
+        O: { x: cx, y: cy },
+        B: polar(tilt),
+        A: polar(tilt + aob),
+        C: polar(tilt - boc)
+    };
+    
+    var target = '';
+    var given = '';
+    var ans = 0;
+    var rows = [];
+    
+    if (v === 1) {
+        target = '\u2220 ACO';
+        given = `\\(\u2220 ABO=${abo}^{\\circ}\\) and \\(\u2220 BOC=${boc}^{\\circ}\\)`;
+        ans = aco;
+        rows = [
+            row('OA = OB', 'radii'),
+            row(`∠BAO = ∠ABO = ${abo}°`, 'base ∠s, isos. △'),
+            row(`∠AOB = 180° − 2(${abo}°) = ${aob}°`, '∠ sum of △'),
+            gap(),
+            row('∠AOB + ∠BOC + ∠AOC = 360°', '∠s at a point'),
+            row(`∠AOC = 360° − ${aob}° − ${boc}° = ${aoc}°`),
+            gap(),
+            row('OA = OC', 'radii'),
+            row(`∠ACO = (180° − ${aoc}°) ÷ 2 = ${ans}°`, 'base ∠s, isos. △')
+        ];
+    }
+    if (v === 2) {
+        target = '\u2220 ABO';
+        given = `\\(\u2220 ACO=${aco}^{\\circ}\\) and \\(\u2220 BOC=${boc}^{\\circ}\\)`;
+        ans = abo;
+        rows = [
+            row('OA = OC', 'radii'),
+            row(`∠CAO = ∠ACO = ${aco}°`, 'base ∠s, isos. △'),
+            row(`∠AOC = 180° − 2(${aco}°) = ${aoc}°`, '∠ sum of △'),
+            gap(),
+            row('∠AOB + ∠BOC + ∠AOC = 360°', '∠s at a point'),
+            row(`∠AOB = 360° − ${aoc}° − ${boc}° = ${aob}°`),
+            gap(),
+            row('OA = OB', 'radii'),
+            row(`∠ABO = (180° − ${aob}°) ÷ 2 = ${ans}°`, 'base ∠s, isos. △')
+        ];
+    }
+    if (v === 3) {
+        target = '\u2220 BOC';
+        given = `\\(\u2220 ABO=${abo}^{\\circ}\\) and \\(\u2220 ACO=${aco}^{\\circ}\\)`;
+        ans = boc;
+        rows = [
+            row('OA = OB', 'radii'),
+            row(`∠BAO = ∠ABO = ${abo}°`, 'base ∠s, isos. △'),
+            gap(),
+            row('OA = OC', 'radii'),
+            row(`∠CAO = ∠ACO = ${aco}°`, 'base ∠s, isos. △'),
+            gap(),
+            row(`∠BAC = ${abo}° + ${aco}° = ${bac}°`),
+            row(`∠BOC = 2∠BAC = 2(${bac}°) = ${ans}°`, '∠ at centre twice ∠ at circumference')
+        ];
+    }
+    
+    var angles = v === 1 
+        ? [{ a: 'A', v: 'B', b: 'O', label: `${abo}°`, r: 20 }, { a: 'C', v: 'O', b: 'B', label: `${boc}°`, r: 18 }] 
+        : v === 2 
+        ? [{ a: 'O', v: 'C', b: 'A', label: `${aco}°`, r: 20 }, { a: 'C', v: 'O', b: 'B', label: `${boc}°`, r: 18 }] 
+        : [{ a: 'A', v: 'B', b: 'O', label: `${abo}°`, r: 20 }, { a: 'O', v: 'C', b: 'A', label: `${aco}°`, r: 20 }];
+        
+    var fig = {
+        points: pts,
+        circle: { center: pts.O, r: R },
+        lines: [
+            { a: 'O', b: 'B' }, { a: 'O', b: 'C' }, { a: 'O', b: 'A' },
+            { a: 'A', b: 'B' }, { a: 'A', b: 'C' }
+        ],
+        labels: baseLabels(pts, ['A', 'B', 'C', 'O']),
+        angles: angles
+    };
+    
+    return mk({
+        typeId: 'circle_x',
+        promptHtml: `In the figure, \\(O\\) is the centre of the circle \\(ABC\\). If ${given}, find \\(${target}\\).`,
+        answer: ans,
+        figure: fig,
+        solutionFigure: fig,
+        solutionRows: rows
+    });
+}
+
+function g11() {
+    var x = ri(28, 45);
+    var y = ri(12, 25);
+    var z = 2 * x + y;
+    var angDBC = 90 - x - y;
+    var angAEB = 90 - x;
+    var t = ri(1, 3);
+    var tilt = ri(-30, 30);
+    var thA = 110 + tilt;
+    var thE = thA + 2 * x;
+    var thD = thE + 2 * y;
+    var thC = thA + 180;
+    var thB = thE + 180;
+    
+    var pts = {
+        A: polar(thA),
+        B: polar(thB),
+        C: polar(thC),
+        D: polar(thD),
+        E: polar(thE)
+    };
+    pts.P = lineIntersection(pts.A, pts.C, pts.B, pts.D);
+    
+    var target = '';
+    var given = '';
+    var ans = 0;
+    var rows = [];
+    
+    if (t === 1) {
+        target = '\u2220 APD';
+        given = `\\(\u2220 ABE=${x}^{\\circ}\\) and \\(\u2220 DBE=${y}^{\\circ}\\)`;
+        ans = z;
+        rows = [
+            row('∠ABC = 90°', '∠ in semi-circle'),
+            gap(),
+            row('∠DBC = ∠ABC − ∠ABE − ∠DBE'),
+            row(`= 90° − ${x}° − ${y}°`),
+            row(`= ${angDBC}°`),
+            gap(),
+            row('∠BAE = 90°', '∠ in semi-circle'),
+            row('∠AEB = 180° − ∠BAE − ∠ABE', '∠ sum of △'),
+            row(`= 180° − 90° − ${x}°`),
+            row(`= ${angAEB}°`),
+            gap(),
+            row(`∠ACB = ∠AEB = ${angAEB}°`, '∠s in the same segment'),
+            gap(),
+            row('∠BPC + ∠DBC + ∠ACB = 180°', '∠ sum of △'),
+            row(`∠BPC = ${ans}°`),
+            gap(),
+            row(`∠APD = ∠BPC = ${ans}°`, 'vert. opp. ∠s')
+        ];
+    }
+    if (t === 2) {
+        target = '\u2220 ABE';
+        given = `\\(\u2220 APD=${z}^{\\circ}\\) and \\(\u2220 DBE=${y}^{\\circ}\\)`;
+        ans = x;
+        rows = [
+            row('∠ABC = 90°', '∠ in semi-circle'),
+            row(`∠DBC = ${90 - y}° − ∠ABE`),
+            gap(),
+            row('∠BAE = 90°', '∠ in semi-circle'),
+            row(`∠AEB = 90° − ∠ABE`, '∠ sum of △'),
+            gap(),
+            row(`∠ACB = 90° − ∠ABE`, '∠s in the same segment'),
+            gap(),
+            row(`∠BPC = ∠APD = ${z}°`, 'vert. opp. ∠s'),
+            gap(),
+            row('∠BPC + ∠DBC + ∠ACB = 180°', '∠ sum of △'),
+            row(`${z}° + (${90 - y}° − ∠ABE) + (90° − ∠ABE) = 180°`),
+            row(`∠ABE = ${ans}°`)
+        ];
+    }
+    if (t === 3) {
+        target = '\u2220 DBE';
+        given = `\\(\u2220 APD=${z}^{\\circ}\\) and \\(\u2220 ABE=${x}^{\\circ}\\)`;
+        ans = y;
+        rows = [
+            row('∠BAE = 90°', '∠ in semi-circle'),
+            row('∠AEB = 180° − ∠BAE − ∠ABE', '∠ sum of △'),
+            row(`= ${angAEB}°`),
+            gap(),
+            row(`∠ACB = ∠AEB = ${angAEB}°`, '∠s in the same segment'),
+            gap(),
+            row('∠ABC = 90°', '∠ in semi-circle'),
+            row(`∠DBC = ${90 - x}° − ∠DBE`),
+            gap(),
+            row(`∠BPC = ∠APD = ${z}°`, 'vert. opp. ∠s'),
+            gap(),
+            row('∠BPC + ∠DBC + ∠ACB = 180°', '∠ sum of △'),
+            row(`${z}° + (${90 - x}° − ∠DBE) + ${angAEB}° = 180°`),
+            row(`∠DBE = ${ans}°`)
+        ];
+    }
+    
+    var angles = t === 1 
+        ? [{ a: 'A', v: 'B', b: 'E', label: `${x}°`, r: 26 }, { a: 'E', v: 'B', b: 'D', label: `${y}°`, r: 20 }] 
+        : t === 2 
+        ? [{ a: 'A', v: 'P', b: 'D', label: `${z}°`, r: 14 }, { a: 'E', v: 'B', b: 'D', label: `${y}°`, r: 20 }] 
+        : [{ a: 'A', v: 'P', b: 'D', label: `${z}°`, r: 14 }, { a: 'A', v: 'B', b: 'E', label: `${x}°`, r: 20 }];
+        
+    var fig = {
+        points: pts,
+        circle: { center: { x: cx, y: cy }, r: R },
+        lines: [
+            { a: 'A', b: 'C' }, { a: 'B', b: 'E' }, { a: 'B', b: 'D' },
+            { a: 'A', b: 'B' }, { a: 'D', b: 'C' }
+        ],
+        labels: baseLabels(pts, ['A', 'B', 'C', 'D', 'E']).concat([{ x: pts.P.x + 8, y: pts.P.y + 10, text: 'P' }]),
+        angles: angles
+    };
+    
+    var sfig = JSON.parse(JSON.stringify(fig));
+    sfig.lines = fig.lines.concat([
+        { a: 'B', b: 'C', color: 'red' },
+        { a: 'A', b: 'E', color: 'red' }
+    ]);
+    sfig.rightAngles = [{ a: 'C', v: 'B', b: 'A' }, { a: 'B', v: 'A', b: 'E' }];
+    
+    return mk({
+        typeId: 'circle_xi',
+        promptHtml: `In the figure, \\(ABCDE\\) is a circle. \\(AC\\) and \\(BE\\) are diameters of the circle. Let \\(P\\) be the point of intersection of \\(AC\\) and \\(BD\\). If ${given}, find \\(${target}\\).`,
+        answer: ans,
+        figure: fig,
+        solutionFigure: sfig,
+        solutionRows: rows
+    });
+}
+
+function g12() {
+    var y = 3 * ri(5, 14);
+    var x = (180 - 2 * y) / 3;
+    var t = ri(1, 3);
+    var thA = 90 + ri(-35, 35);
+    var thB = thA + 2 * y;
+    var thC = thB + 2 * x;
+    var thD = thC + 2 * x;
+    var thE = thD + 2 * y;
+    
+    var pts = {
+        A: polar(thA),
+        B: polar(thB),
+        C: polar(thC),
+        D: polar(thD),
+        E: polar(thE)
+    };
+    
+    var angEBC = 180 - (y + x);
+    var angCDE = 180 - angEBC;
+    var angBCD = x + 2 * y;
+    var target = '';
+    var ans = 0;
+    var rows = [];
+    
+    if (t === 1) {
+        target = '\u2220 EBC';
+        ans = angEBC;
+        rows = [
+            row('Let ∠ABE = x.'),
+            row('∠BEC = ∠ABE = x', 'alt. ∠s, AB // EC'),
+            row('∠CED = ∠BEC = x', 'given'),
+            gap(),
+            row('Join AC and BD.'),
+            row(`∠ACB = ∠BEA = ${y}°`, '∠s in the same segment'),
+            row('∠ACE = ∠ABE = x', '∠s in the same segment'),
+            gap(),
+            row('In BCDE:'),
+            row('∠BCD + ∠BED = 180°', 'opp. ∠s, cyclic quad.'),
+            row(`(x + ${y}° + ${y}°) + (x + x) = 180°`),
+            row(`x = ${x}°`),
+            gap(),
+            row('In △BCE:'),
+            row('∠EBC + ∠BCE + ∠BEC = 180°', '∠ sum of △'),
+            row(`∠EBC + (${y}° + ${x}°) + ${x}° = 180°`),
+            row(`∠EBC = ${ans}°`)
+        ];
+    }
+    if (t === 2) {
+        target = '\u2220 CDE';
+        ans = angCDE;
+        rows = [
+            row('Let ∠ABE = x.'),
+            row('∠BEC = ∠ABE = x', 'alt. ∠s, AB // EC'),
+            row('∠CED = ∠BEC = x', 'given'),
+            gap(),
+            row('Join AC and BD.'),
+            row(`∠ACB = ∠BEA = ${y}°`, '∠s in the same segment'),
+            row('∠ACE = ∠ABE = x', '∠s in the same segment'),
+            gap(),
+            row('In BCDE:'),
+            row('∠BCD + ∠BED = 180°', 'opp. ∠s, cyclic quad.'),
+            row(`(x + ${y}° + ${y}°) + (x + x) = 180°`),
+            row(`x = ${x}°`),
+            gap(),
+            row('In △CDE:'),
+            row('∠CDE + ∠ECD + ∠CED = 180°', '∠ sum of △'),
+            row(`∠CDE + ${y}° + ${x}° = 180°`),
+            row(`∠CDE = ${ans}°`)
+        ];
+    }
+    if (t === 3) {
+        target = '\u2220 BCD';
+        ans = angBCD;
+        rows = [
+            row('Let ∠ABE = x.'),
+            row('∠BEC = ∠ABE = x', 'alt. ∠s, AB // EC'),
+            row('∠CED = ∠BEC = x', 'given'),
+            gap(),
+            row('Join AC and BD.'),
+            row(`∠ACB = ∠BEA = ${y}°`, '∠s in the same segment'),
+            row('∠ACE = ∠ABE = x', '∠s in the same segment'),
+            gap(),
+            row('In BCDE:'),
+            row('∠BCD + ∠BED = 180°', 'opp. ∠s, cyclic quad.'),
+            row(`(x + ${y}° + ${y}°) + (x + x) = 180°`),
+            row(`x = ${x}°`),
+            gap(),
+            row('∠BCD = x + y° + y°'),
+            row(`= ${ans}°`)
+        ];
+    }
+    
+    var fig = {
+        points: pts,
+        circle: { center: { x: cx, y: cy }, r: R },
+        lines: [
+            { a: 'A', b: 'B' }, { a: 'B', b: 'C' }, { a: 'C', b: 'D' },
+            { a: 'D', b: 'E' }, { a: 'E', b: 'A' }, { a: 'B', b: 'E' }, { a: 'C', b: 'E' }
+        ],
+        labels: baseLabels(pts, ['A', 'B', 'C', 'D', 'E']),
+        angles: [
+            { a: 'A', v: 'E', b: 'B', label: `${y}°`, r: 20 },
+            { a: 'D', v: 'C', b: 'E', label: `${y}°`, r: 20 }
+        ]
+    };
+    
+    var sfig = JSON.parse(JSON.stringify(fig));
+    sfig.lines = fig.lines.concat([
+        { a: 'A', b: 'C', color: 'red' },
+        { a: 'B', b: 'D', color: 'red' }
+    ]);
+    
+    return mk({
+        typeId: 'circle_xii',
+        promptHtml: `In the figure, \\(ABCDE\\) is a circle. It is given that \\(AB // EC\\) and \\(EC\\) is the angle bisector of \\(\u2220 DEB\\). If \\(\u2220 ECD = \u2220 BEA = ${y}^{\\circ}\\), find \\(${target}\\).`,
+        answer: ans,
+        figure: fig,
+        solutionFigure: sfig,
+        solutionRows: rows
+    });
+}
+
+function g13() {
+    var sets = [[40, 4, 3], [36, 3, 3], [30, 3, 2], [45, 5, 4], [20, 4, 4]];
+    var s = pick(sets);
+    var alpha = s[0];
+    var m = s[1];
+    var n = s[2];
+    var sum = 180 - alpha;
+    var k = sum / (m + n);
+    var acb = n * k;
+    var bac = m * k;
+    var theta = acb - alpha;
+    var v = ri(1, 3);
+    var ans = v === 1 ? theta : v === 2 ? bac : acb;
+    var tilt = ri(-15, 15);
+    
+    var pts = {
+        A: polar(270 + tilt),
+        B: polar(270 + tilt + 2 * acb),
+        C: polar(270 + tilt - 2 * alpha)
+    };
+    pts.D = lineIntersection(pts.A, { x: pts.A.x - 200, y: pts.A.y }, pts.B, pts.C);
+    
+    var target = '';
+    var rows = [];
+    
+    if (v === 1) {
+        target = '\u2220 ADC';
+        rows = [
+            row(`∠ABC = ∠CAD = ${alpha}°`, '∠ in alt. segment'),
+            gap(),
+            row('In △ABC:'),
+            row(`∠BAC + ∠ACB = 180° − ${alpha}° = ${sum}°`, '∠ sum of △'),
+            row(`∠BAC : ∠ACB = ${arc('BC')} : ${arc('AB')} = ${m} : ${n}`, '∠s prop. to arcs at circumference'),
+            gap(),
+            row(`∠ACB = ${sum}° × ${n}/${m + n} = ${acb}°`),
+            row(`∠BAC = ${sum}° × ${m}/${m + n} = ${bac}°`),
+            gap(),
+            row('In △ACD:'),
+            row('∠ACB = ∠CAD + ∠ADC', 'ext. ∠ of △'),
+            row(`${acb}° = ${alpha}° + ∠ADC`),
+            row(`∠ADC = ${ans}°`)
+        ];
+    }
+    if (v === 2) {
+        target = '\u2220 BAC';
+        rows = [
+            row(`∠ABC = ∠CAD = ${alpha}°`, '∠ in alt. segment'),
+            gap(),
+            row('In △ABC:'),
+            row(`∠BAC + ∠ACB = 180° − ${alpha}° = ${sum}°`, '∠ sum of △'),
+            row(`∠BAC : ∠ACB = ${arc('BC')} : ${arc('AB')} = ${m} : ${n}`, '∠s prop. to arcs at circumference'),
+            gap(),
+            row(`∠BAC = ${sum}° × ${m}/${m + n} = ${ans}°`)
+        ];
+    }
+    if (v === 3) {
+        target = '\u2220 ACB';
+        rows = [
+            row(`∠ABC = ∠CAD = ${alpha}°`, '∠ in alt. segment'),
+            gap(),
+            row('In △ABC:'),
+            row(`∠BAC + ∠ACB = 180° − ${alpha}° = ${sum}°`, '∠ sum of △'),
+            row(`∠BAC : ∠ACB = ${arc('BC')} : ${arc('AB')} = ${m} : ${n}`, '∠s prop. to arcs at circumference'),
+            gap(),
+            row(`∠ACB = ${sum}° × ${n}/${m + n} = ${ans}°`)
+        ];
+    }
+    
+    var fig = {
+        points: pts,
+        circle: { center: { x: cx, y: cy }, r: R },
+        lines: [
+            { a: 'D', b: 'B' },
+            { a: 'A', b: 'B' },
+            { a: 'A', b: 'C' },
+            { a: 'A', b: 'D' }
+        ],
+        labels: baseLabels(pts, ['A', 'B', 'C']).concat([{ x: pts.D.x - 10, y: pts.D.y, text: 'D' }]),
+        angles: [{ a: 'C', v: 'A', b: 'D', label: `${alpha}°`, r: 22 }]
+    };
+    
+    return mk({
+        typeId: 'circle_xiii',
+        promptHtml: `In the figure, \\(DA\\) is a tangent to the circle at \\(A\\). \\(BCD\\) is a straight line. Given that ${arc('BC')} : ${arc('AB')} = ${m} : ${n} and \\(\u2220 CAD = ${alpha}^{\\circ}\\), find \\(${target}\\).`,
+        answer: ans,
+        figure: fig,
+        solutionFigure: fig,
+        solutionRows: rows,
+        stepMin: 3,
+        stepMax: 5
+    });
+}
+
+function g14() {
+    var sets = [[12, 10, 8], [13, 14, 15], [20, 15, 7], [11, 13, 20], [7, 8, 9], [9, 10, 11], [13, 13, 10], [14, 15, 17]];
+    var p = pick(sets);
+    var BC = p[0];
+    var AC = p[1];
+    var AB = p[2];
+    var s = (BC + AC + AB) / 2;
+    var inner = s * (s - BC) * (s - AC) * (s - AB);
+    var r = Math.sqrt(inner) / s;
+    var circ = +(2 * Math.PI * r).toFixed(1);
+    var area = +(Math.PI * r * r).toFixed(1);
+    var v = ri(1, 3);
+    var ans = v === 1 ? circ : v === 2 ? area : +r.toFixed(1);
+    
+    var figPts = {
+        A: { x: 115, y: 55 },
+        B: { x: 70, y: 250 },
+        C: { x: 270, y: 250 }
+    };
+    
+    var target = v === 1 ? 'circumference' : v === 2 ? 'area' : 'radius';
+    var rows = [
+        row(`s = (AB + BC + AC)/2 = (${AB}+${BC}+${AC})/2 = ${s}`),
+        gap(),
+        row('Area of △ABC = √(s(s−a)(s−b)(s−c))'),
+        row(`= √(${s}(${s}-${BC})(${s}-${AC})(${s}-${AB})) = √${inner}`),
+        gap(),
+        row('Area of △ABC = sr'),
+        row(`r = √${inner} ÷ ${s} ≈ ${r.toFixed(2)}`),
+        gap(),
+        v === 1 ? row(`Circumference = 2πr ≈ ${ans}`) : v === 2 ? row(`Area = πr² ≈ ${ans}`) : row(`radius ≈ ${ans}`)
+    ];
+    
+    var fig = {
+        points: figPts,
+        lines: [
+            { a: 'A', b: 'B' },
+            { a: 'B', b: 'C' },
+            { a: 'C', b: 'A' }
+        ],
+        labels: [
+            { x: 115, y: 40, text: 'A' },
+            { x: 58, y: 260, text: 'B' },
+            { x: 282, y: 260, text: 'C' },
+            { x: 90, y: 150, text: String(AB) },
+            { x: 170, y: 265, text: String(BC) },
+            { x: 205, y: 145, text: String(AC) }
+        ]
+    };
+    
+    var vals = [ans - 0.5, ans, ans + 0.5, ans + 1].sort(function(a, b) { return a - b }).map(function(v) {
+        return { tex: String(Number(v.toFixed(1))) };
+    });
+    
+    return {
+        typeId: 'circle_xiv',
+        promptHtml: `In the figure, a circle is inscribed in the triangle \\(ABC\\). If \\(AB=${AB}\\), \\(BC=${BC}\\) and \\(AC=${AC}\\), find the ${target} of the circle, correct to 1 decimal place.`,
+        answer: ans,
+        choices: vals,
+        correctIndex: vals.findIndex(function(v) { return v.tex === String(Number(ans.toFixed(1))) }),
+        figure: fig,
+        solutionFigure: fig,
+        solutionRows: rows,
+        points: 1
+    };
+}
+
+function g15() {
+    var aob = 2 * ri(15, 40);
+    var boc = 180 - 2 * aob;
+    var bac = 90 - aob;
+    var acb = aob / 2;
+    var abc = 90 + aob / 2;
+    var oac = acb;
+    var v = ri(1, 3);
+    var tilt = ri(20, 60);
+    
+    var pts = {
+        O: { x: cx, y: cy },
+        A: polar(tilt),
+        B: polar(tilt - aob),
+        C: polar(tilt + 180 + aob)
+    };
+    
+    var target = '';
+    var ans = 0;
+    var rows = [];
+    
+    if (v === 1) {
+        target = '\u2220 BAC';
+        ans = bac;
+        rows = [
+            row('OA // BC', 'given'),
+            row(`∠OBC = ∠AOB = ${aob}°`, 'alt. ∠s, OA // BC'),
+            gap(),
+            row('In △OBC:'),
+            row('OB = OC', 'radii'),
+            row(`∠OCB = ∠OBC = ${aob}°`, 'base ∠s, isos. △'),
+            row(`∠BOC = 180° − 2(${aob}°) = ${boc}°`, '∠ sum of △'),
+            gap(),
+            row('∠BAC = ½∠BOC', '∠ at centre twice ∠ at circumference'),
+            row(`= ${ans}°`)
+        ];
+    }
+    if (v === 2) {
+        target = '\u2220 ABC';
+        ans = abc;
+        rows = [
+            row('In △OAB:'),
+            row('OA = OB', 'radii'),
+            row(`∠ABO = (180° − ${aob}°) ÷ 2 = ${(180 - aob) / 2}°`, 'base ∠s, isos. △'),
+            gap(),
+            row('OA // BC', 'given'),
+            row(`∠OBC = ∠AOB = ${aob}°`, 'alt. ∠s, OA // BC'),
+            gap(),
+            row('∠ABC = ∠ABO + ∠OBC'),
+            row(`= ${(180 - aob) / 2}° + ${aob}° = ${ans}°`)
+        ];
+    }
+    if (v === 3) {
+        target = '\u2220 OAC';
+        ans = oac;
+        rows = [
+            row('∠ACB = ½∠AOB', '∠ at centre twice ∠ at circumference'),
+            row(`= ${acb}°`),
+            gap(),
+            row('OA // BC', 'given'),
+            row(`∠OAC = ∠ACB = ${ans}°`, 'alt. ∠s, OA // BC')
+        ];
+    }
+    
+    var fig = {
+        points: pts,
+        circle: { center: pts.O, r: R },
+        lines: [
+            { a: 'O', b: 'A' }, { a: 'C', b: 'B' }, { a: 'O', b: 'B' },
+            { a: 'A', b: 'B' }, { a: 'A', b: 'C' }
+        ],
+        labels: baseLabels(pts, ['A', 'B', 'C', 'O']),
+        angles: [{ a: 'B', v: 'O', b: 'A', label: `${aob}°`, r: 18 }]
+    };
+    
+    var sfig = JSON.parse(JSON.stringify(fig));
+    if (v !== 2) {
+        sfig.lines = fig.lines.concat([{ a: 'O', b: 'C', color: 'red' }]);
+    }
+    
+    return mk({
+        typeId: 'circle_xv',
+        promptHtml: `In the figure, \\(O\\) is the centre of the circle. Given that \\(OA // BC\\) and \\(\u2220 AOB=${aob}^{\\circ}\\), find \\(${target}\\).`,
+        answer: ans,
+        figure: fig,
+        solutionFigure: sfig,
+        solutionRows: rows
+    });
+}
+
+function g16() {
+    var sets = [[60, 48], [40, 50], [36, 45], [84, 60], [72, 54], [50, 40], [70, 65], [80, 40]];
+    var p = pick(sets);
+    var S = p[0];
+    var Rang = p[1];
+    var Q = 90 - S / 2;
+    var Pang = 180 - Q - Rang;
+    
+    function gcd(a, b) {
+        return b ? gcd(b, a % b) : a;
+    }
+    
+    var gg = gcd(gcd(Rang, Pang), Q);
+    var rat = [Rang / gg, Pang / gg, Q / gg];
+    var v = ri(1, 2);
+    var ans, choices, rows = [];
+    
+    if (v === 1) {
+        ans = `${rat[0]}:${rat[1]}:${rat[2]}`;
+        choices = [
+            ans,
+            `${rat[2]}:${rat[1]}:${rat[0]}`,
+            `${rat[0]}:${rat[2]}:${rat[1]}`,
+            `${rat[1]}:${rat[0]}:${rat[2]}`
+        ].sort(function() { return Math.random() - .5 }).map(function(t) { return { tex: t }; });
+        rows = [
+            row('SP = SR', 'tangent properties'),
+            row(`∠SRP = ∠SPR = (180° − ${S}°)/2 = ${Q}°`, 'base ∠s, isos. △'),
+            gap(),
+            row(`∠PQR = ∠SRP = ${Q}°`, '∠ in alt. segment'),
+            gap(),
+            row('In △PQR:'),
+            row(`∠QPR = 180° − ${Q}° − ${Rang}° = ${Pang}°`, '∠ sum of △'),
+            gap(),
+            row(`${arc('PQ')} : ${arc('QR')} : ${arc('RP')} = ∠PRQ : ∠QPR : ∠PQR`, 'arcs prop. to ∠s at circumference'),
+            row(`= ${Rang} : ${Pang} : ${Q}`),
+            row(`= ${ans}`)
+        ];
+    } else {
+        ans = Pang;
+        var vals = [Math.max(5, ans - 10), ans, ans + 10, ans + 20].sort(function(a, b) { return a - b; });
+        choices = vals.map(function(n) { return { tex: `${n}^{\\circ}` }; });
+        rows = [
+            row('SP = SR', 'tangent properties'),
+            row(`∠SRP = ∠SPR = (180° − ${S}°)/2 = ${Q}°`, 'base ∠s, isos. △'),
+            gap(),
+            row(`∠PQR = ∠SRP = ${Q}°`, '∠ in alt. segment'),
+            gap(),
+            row('In △PQR:'),
+            row(`∠QPR = 180° − ${Q}° − ${Rang}° = ${ans}°`, '∠ sum of △')
+        ];
+    }
+    
+    var tilt = ri(-20, 20);
+    var rad = R;
+    var pts = {
+        S: polar(tilt, rad / Math.sin(S * Math.PI / 360)),
+        P: polar(tilt + 90 - S / 2, rad),
+        R: polar(tilt - 90 + S / 2, rad),
+        Q: polar(tilt + 90 - S / 2 + 2 * Rang, rad),
+        O: { x: cx, y: cy, show: false }
+    };
+    
+    var fig = {
+        points: pts,
+        circle: { center: { x: cx, y: cy }, r: rad },
+        lines: [
+            { a: 'S', b: 'P' }, { a: 'S', b: 'R' }, { a: 'P', b: 'R' },
+            { a: 'P', b: 'Q' }, { a: 'Q', b: 'R' }
+        ],
+        labels: [
+            { x: pts.P.x, y: pts.P.y - 16, text: 'P' },
+            { x: pts.R.x, y: pts.R.y + 16, text: 'R' },
+            { x: pts.Q.x - 12, y: pts.Q.y, text: 'Q' },
+            { x: pts.S.x + 14, y: pts.S.y, text: 'S' }
+        ],
+        angles: [
+            { a: 'P', v: 'S', b: 'R', label: `${S}°`, r: 22 },
+            { a: 'P', v: 'R', b: 'Q', label: `${Rang}°`, r: 18 }
+        ]
+    };
+    
+    return {
+        typeId: 'circle_xvi',
+        promptHtml: `In the figure, \\(SP\\) and \\(SR\\) are tangents to the circle at \\(P\\) and \\(R\\) respectively. If \\(\u2220 PSR = ${S}^{\\circ}\\) and \\(\u2220 PRQ = ${Rang}^{\\circ}\\), find ${v === 1 ? `${arc('PQ')}:${arc('QR')}:${arc('RP')}` : '\u2220 QPR'}.`,
+        answer: ans,
+        choices: choices,
+        correctIndex: choices.findIndex(function(c) { return c.tex === ans || c.tex === `${ans}^{\\circ}`; }),
+        figure: fig,
+        solutionFigure: fig,
+        solutionRows: rows,
+        points: 1
+    };
+}
+
+function g17() {
+    var B = ri(40, 75);
+    var Cang = ri(40, 75);
+    var A = 180 - B - Cang;
+    var DOF = 180 - B;
+    var DOE = 180 - Cang;
+    var EOF = 180 - A;
+    var v = ri(1, 3);
+    var givenCent = v === 1 ? DOF : v === 2 ? EOF : DOE;
+    var givenVert = v === 3 ? B : Cang;
+    var ans = v === 2 ? B : A;
+    var target = v === 2 ? '\u2220 ABC' : '\u2220 BAC';
+    var interm = v === 1 ? B : v === 2 ? A : Cang;
+    
+    var rows = [
+        row('Radius ⟂ tangent at a point', 'tangent ⟂ radius'),
+        gap(),
+        row(`In the quadrilateral, angle = 360° − 90° − 90° − ${givenCent}°`, '∠ sum of polygon'),
+        row(`= 180° − ${givenCent}° = ${interm}°`),
+        gap(),
+        row('In △ABC:'),
+        row(`Required angle = 180° − ${interm}° − ${givenVert}° = ${ans}°`, '∠ sum of △')
+    ];
+    
+    var tilt = ri(-20, 20);
+    var thD = 270 + tilt;
+    var thE = thD + 180 - Cang;
+    var thF = thE + 180 - A;
+    
+    var rA = 1 / Math.sin(A * Math.PI / 360);
+    var rB = 1 / Math.sin(B * Math.PI / 360);
+    var rC = 1 / Math.sin(Cang * Math.PI / 360);
+    var rr = 85 / Math.max(rA, rB, rC);
+    
+    var pts = {
+        O: { x: cx, y: cy },
+        D: polar(thD, rr),
+        E: polar(thE, rr),
+        F: polar(thF, rr)
+    };
+    pts.C = polar(thD + (180 - Cang) / 2, rr * rC);
+    pts.A = polar(thE + (180 - A) / 2, rr * rA);
+    pts.B = polar(thF + (180 - B) / 2, rr * rB);
+    
+    var linesArr = [
+        { a: 'A', b: 'B' }, { a: 'B', b: 'C' }, { a: 'C', b: 'A' },
+        { a: 'O', b: v === 1 ? 'D' : 'E' }, { a: 'O', b: 'F' }
+    ];
+    if (v === 3) {
+        linesArr = linesArr.concat([{ a: 'O', b: 'D' }]);
+    }
+    
+    var anglesArr = [];
+    if (v === 1) {
+        anglesArr.push({ a: 'F', v: 'O', b: 'D', label: `${givenCent}°`, r: 18 });
+    } else if (v === 2) {
+        anglesArr.push({ a: 'E', v: 'O', b: 'F', label: `${givenCent}°`, r: 18 });
+    } else {
+        anglesArr.push({ a: 'D', v: 'O', b: 'E', label: `${givenCent}°`, r: 18 });
+    }
+    
+    if (v === 3) {
+        anglesArr.push({ a: 'C', v: 'B', b: 'A', label: `${givenVert}°`, r: 18 });
+    } else {
+        anglesArr.push({ a: 'A', v: 'C', b: 'B', label: `${givenVert}°`, r: 18 });
+    }
+    
+    var fig = {
+        points: pts,
+        circle: { center: pts.O, r: rr },
+        lines: linesArr,
+        labels: baseLabels(pts, ['A', 'B', 'C', 'D', 'E', 'F', 'O']),
+        angles: anglesArr
+    };
+    
+    var promptConditions = v === 1 
+        ? `\\(\u2220 DOF=${givenCent}^{\\circ}\\) and \\(\u2220 ACB=${givenVert}^{\\circ}\\)` 
+        : v === 2 
+        ? `\\(\u2220 EOF=${givenCent}^{\\circ}\\) and \\(\u2220 ACB=${givenVert}^{\\circ}\\)` 
+        : `\\(\u2220 DOE=${givenCent}^{\\circ}\\) and \\(\u2220 ABC=${givenVert}^{\\circ}\\)`;
+        
+    return mk({
+        typeId: 'circle_xvii',
+        promptHtml: `In the figure, a circle centred at \\(O\\) is inscribed in \\(△ABC\\). \\(D\\), \\(E\\), and \\(F\\) are points of tangency on \\(BC\\), \\(AC\\), and \\(AB\\) respectively. If ${promptConditions}, find \\(${target}\\).`,
+        answer: ans,
+        figure: fig,
+        solutionFigure: fig,
+        solutionRows: rows
+    });
+}
+
+function g18() {
+    var r = pick([1, 2, 3]);
+    var x = ri(r === 1 ? 30 : r === 2 ? 25 : 15, r === 1 ? 55 : r === 2 ? 40 : 30);
+    var arcRel = r === 1 ? `${arc('AB')} = ${arc('BC')}` : r === 2 ? `${arc('AB')} = 2${arc('BC')}` : `${arc('AB')} = 3${arc('BC')}`;
+    var ADB = r * x;
+    var ADC = (r + 1) * x;
+    var ABC = 180 - ADC;
+    var maxDBC = ABC - 20;
+    var DBC = ri(20, maxDBC);
+    var ABD = ABC - DBC;
+    var t = ri(1, 2);
+    
+    var target = t === 1 ? '\u2220 BAD' : '\u2220 BCD';
+    var ans = t === 1 ? 180 - ABD - ADB : 180 - DBC - x;
+    
+    var rows = [
+        row('Let ∠BDC = x.'),
+        row(`∠ADB = ${r === 1 ? 'x' : r === 2 ? '2x' : '3x'}`, 'arc prop. to ∠s at circumference'),
+        gap(),
+        row('In cyclic quadrilateral ABCD:'),
+        row(`x + ${r === 1 ? 'x' : r === 2 ? '2x' : '3x'} + ${ABD}° + ${DBC}° = 180°`, 'opp. ∠s, cyclic quad.'),
+        row(`x = ${x}°`),
+        gap(),
+        row(`In △${t === 1 ? 'ABD' : 'BCD'}:`),
+        row(`${t === 1 ? '∠BAD' : '∠BCD'} = 180° − ${t === 1 ? ABD : DBC}° − ${t === 1 ? ADB : x}°`, '∠ sum of △'),
+        row(`= ${ans}°`)
+    ];
+    
+    var tilt = ri(-25, 25);
+    var thB = 270 + tilt;
+    var thC = thB + 2 * x;
+    var thD = thC + 2 * DBC;
+    var thA = thD + 2 * ABD;
+    
+    var pts = {
+        B: polar(thB),
+        C: polar(thC),
+        D: polar(thD),
+        A: polar(thA)
+    };
+    
+    var fig = {
+        points: pts,
+        circle: { center: { x: cx, y: cy }, r: R },
+        lines: [
+            { a: 'A', b: 'B' }, { a: 'B', b: 'C' }, { a: 'C', b: 'D' },
+            { a: 'D', b: 'A' }, { a: 'B', b: 'D' }
+        ],
+        labels: baseLabels(pts, ['A', 'B', 'C', 'D']),
+        angles: [
+            { a: 'D', v: 'B', b: 'A', label: `${ABD}°`, r: 22 },
+            { a: 'C', v: 'B', b: 'D', label: `${DBC}°`, r: 16 }
+        ]
+    };
+    
+    return mk({
+        typeId: 'circle_xviii',
+        promptHtml: `In the figure, ${arcRel}, \\(\u2220 ABD=${ABD}^{\\circ}\\) and \\(\u2220 DBC=${DBC}^{\\circ}\\). Find \\(${target}\\).`,
+        answer: ans,
+        figure: fig,
+        solutionFigure: fig,
+        solutionRows: rows
+    });
+}
+
+function g19() {
+    var variation = ri(1, 3);
+    var r, arcRel, rx, x, rsub;
+    
+    if (variation === 1) {
+        r = 1;
+        arcRel = `${arc('BC')} = ${arc('AB')}`;
+        rx = 'x';
+        x = ri(15, 40);
+        rsub = `${x}°`;
+    } else if (variation === 2) {
+        r = 2;
+        arcRel = `${arc('BC')} = 2${arc('AB')}`;
+        rx = '2x';
+        x = ri(15, 25);
+        rsub = `2(${x}°)`;
+    } else {
+        r = 3;
+        arcRel = `${arc('BC')} = 3${arc('AB')}`;
+        rx = '3x';
+        x = ri(10, 20);
+        rsub = `3(${x}°)`;
+    }
+    
+    var ABD = ri(30, 80);
+    var BCD = ABD + x;
+    var targetVar = ri(1, 3);
+    var target = '';
+    var ans = 0;
+    var rows = [];
+    
+    if (targetVar === 1) {
+        target = '\u2220 CBD';
+        ans = 180 - BCD - r * x;
+        rows = [
+            row('Let ∠ADB = x.'),
+            row(`∠BDC = ${rx}`, 'arc prop. to ∠s at circumference'),
+            gap(),
+            row('In △BCD:'),
+            row(`∠CBD = 180° − ${rsub} − ${BCD}°`, '∠ sum of △'),
+            row(`= ${ans}°`)
+        ];
+    }
+    if (targetVar === 2) {
+        target = '\u2220 BDC';
+        ans = r * x;
+        rows = [
+            row('Let ∠ADB = x.'),
+            row(`∠BDC = ${rx}`, 'arc prop. to ∠s at circumference'),
+            row(`= ${ans}°`)
+        ];
+    }
+    if (targetVar === 3) {
+        target = '\u2220 ADC';
+        ans = x + r * x;
+        rows = [
+            row('Let ∠ADB = x.'),
+            row(`∠BDC = ${rx}`, 'arc prop. to ∠s at circumference'),
+            gap(),
+            row('∠ADC = ∠ADB + ∠BDC'),
+            row(`= ${x}° + ${rsub}`),
+            row(`= ${ans}°`)
+        ];
+    }
+    
+    var tilt = ri(-25, 25);
+    var thD = 270 + tilt;
+    var thA = thD + 2 * ABD;
+    var thB = thA + 2 * x;
+    var thC = thB + 2 * r * x;
+    
+    var pts = {
+        D: polar(thD),
+        A: polar(thA),
+        B: polar(thB),
+        C: polar(thC)
+    };
+    
+    var fig = {
+        points: pts,
+        circle: { center: { x: cx, y: cy }, r: R },
+        lines: [
+            { a: 'A', b: 'B' }, { a: 'B', b: 'C' }, { a: 'C', b: 'D' },
+            { a: 'D', b: 'A' }, { a: 'B', b: 'D' }
+        ],
+        labels: baseLabels(pts, ['A', 'B', 'C', 'D']),
+        angles: [
+            { a: 'D', v: 'B', b: 'A', label: `${ABD}°`, r: 20 },
+            { a: 'D', v: 'C', b: 'B', label: `${BCD}°`, r: 20 }
+        ]
+    };
+    
+    return mk({
+        typeId: 'circle_xix',
+        promptHtml: `In the figure, ${arcRel}, \\(\u2220 ABD = ${ABD}^{\\circ}\\), and \\(\u2220 BCD = ${BCD}^{\\circ}\\). Find \\(${target}\\).`,
+        answer: ans,
+        figure: fig,
+        solutionFigure: fig,
+        solutionRows: rows
+    });
+}
+
+function g20() {
+    var pool = [[22.5, 4, 12], [24, 4, 11], [25, 5, 13], [30, 7, 14], [36, 5, 7.5], [40, 8, 10], [45, 6, 6], [60, 5, 2.5]];
+    var set = pick(pool);
+    var BDC = set[0];
+    var BC = set[1];
+    var AB = set[2];
+    var ADB = 90 - BDC;
+    var t = ri(1, 3);
+    
+    var target = '';
+    var ans = 0;
+    var rows = [];
+    
+    if (t === 1) {
+        target = arc('AB');
+        ans = AB;
+        rows = [
+            row(arc('AB') + '/' + arc('BC') + ' = ∠ADB/∠BDC', 'arc prop. to ∠s at circumference'),
+            row(arc('AB') + '/' + BC + ' = ' + ADB + '°/' + BDC + '°'),
+            row(arc('AB') + ' = ' + BC + ' × ' + ADB + '/' + BDC),
+            row('= ' + ans)
+        ];
+    }
+    if (t === 2) {
+        target = arc('BC');
+        ans = BC;
+        rows = [
+            row(arc('AB') + '/' + arc('BC') + ' = ∠ADB/∠BDC', 'arc prop. to ∠s at circumference'),
+            row(AB + '/' + arc('BC') + ' = ' + ADB + '°/' + BDC + '°'),
+            row(arc('BC') + ' = ' + AB + ' × ' + BDC + '/' + ADB),
+            row('= ' + ans)
+        ];
+    }
+    if (t === 3) {
+        target = '\u2220 BDC';
+        ans = BDC;
+        rows = [
+            row('Let ∠BDC = x.'),
+            row('∠ADB = 90° − x'),
+            gap(),
+            row(arc('AB') + '/' + arc('BC') + ' = ∠ADB/∠BDC', 'arc prop. to ∠s at circumference'),
+            row(AB + '/' + BC + ' = (90° − x)/x'),
+            row(AB + 'x = ' + BC + '(90° − x)'),
+            row((AB + BC) + 'x = ' + (BC * 90) + '°'),
+            row('x = ' + ans + '°')
+        ];
+    }
+    
+    var tilt = ri(-25, 25);
+    var thC = tilt;
+    var thA = 180 + tilt;
+    var thB = thC - 2 * BDC;
+    var thD = tilt + ri(50, 130);
+    
+    var pts = {
+        A: polar(thA),
+        B: polar(thB),
+        C: polar(thC),
+        D: polar(thD)
+    };
+    
+    var textsArr = t === 1 
+        ? [{ x: polar(thC - BDC, R + 30).x, y: polar(thC - BDC, R + 30).y, text: String(BC) }] 
+        : t === 2 
+        ? [{ x: polar(tilt - 90 - BDC, R + 30).x, y: polar(tilt - 90 - BDC, R + 30).y, text: String(AB) }] 
+        : [
+            { x: polar(tilt - 90 - BDC, R + 30).x, y: polar(tilt - 90 - BDC, R + 30).y, text: String(AB) },
+            { x: polar(thC - BDC, R + 30).x, y: polar(thC - BDC, R + 30).y, text: String(BC) }
+        ];
+        
+    var fig = {
+        points: pts,
+        circle: { center: { x: cx, y: cy }, r: R },
+        lines: [
+            { a: 'A', b: 'C' }, { a: 'A', b: 'D' },
+            { a: 'D', b: 'C' }, { a: 'D', b: 'B' }
+        ],
+        labels: baseLabels(pts, ['A', 'B', 'C', 'D']),
+        angles: t !== 3 ? [{ a: 'B', v: 'D', b: 'C', label: `${BDC}°`, r: 30 }] : [],
+        texts: textsArr,
+        rightAngles: []
+    };
+    
+    var sfig = JSON.parse(JSON.stringify(fig));
+    sfig.rightAngles = [{ a: 'A', v: 'D', b: 'C' }];
+    
+    if (t !== 3) {
+        rows.unshift(row('∠ADC = 90°', '∠ in semi-circle'));
+        rows.splice(2, 0, gap(), row('∠ADB = ∠ADC − ∠BDC'), row(`= 90° − ${BDC}°`), row(`= ${ADB}°`), gap());
+    } else {
+        rows.unshift(row('∠ADC = 90°', '∠ in semi-circle'), gap());
+    }
+    
+    var vals = (t === 3 ? [Math.max(2, ans - 4), ans, ans + 4, ans + 8] : [Math.max(1, ans - 2), ans, ans + 2, ans + 4]).sort(function(a, b) { return a - b; });
+    
+    var promptConditions = t === 1 
+        ? `If \\(\u2220 BDC=${BDC}^{\\circ}\\) and ${arc('BC')} = ${BC}, find ${arc('AB')}.` 
+        : t === 2 
+        ? `If \\(\u2220 BDC=${BDC}^{\\circ}\\) and ${arc('AB')} = ${AB}, find ${arc('BC')}.` 
+        : `If ${arc('AB')} = ${AB} and ${arc('BC')} = ${BC}, find \\(\u2220 BDC\\).`;
+        
+    return {
+        typeId: 'circle_xx',
+        promptHtml: `In the figure, \\(AC\\) is a diameter of the circle \\(ABCD\\). ${promptConditions}`,
+        answer: ans,
+        choices: vals.map(function(v) { return { tex: t === 3 ? String(v) + '^{\\circ}' : String(v) }; }),
+        correctIndex: vals.findIndex(function(v) { return v === ans; }),
+        figure: fig,
+        solutionFigure: sfig,
+        solutionRows: rows,
+        points: 1
+    };
+}
+
+function g21() {
+    var half = ri(15, 40);
+    var x = 2 * half;
+    var base = 90 - half;
+    var t = ri(1, 3);
+    var tilt = ri(-25, 25);
+    var thQ = 270 + tilt;
+    var thR = thQ - 2 * x;
+    var thS = thQ - 180 - x;
+    var thT = thQ + ri(35, 70);
+    
+    var pts = {
+        Q: polar(thQ),
+        R: polar(thR),
+        S: polar(thS),
+        T: polar(thT)
+    };
+    pts.P = {
+        x: pts.Q.x - 52 * Math.sin(thQ * Math.PI / 180),
+        y: pts.Q.y - 52 * Math.cos(thQ * Math.PI / 180)
+    };
+    pts._pr = {
+        x: pts.Q.x + 36 * Math.sin(thQ * Math.PI / 180),
+        y: pts.Q.y + 36 * Math.cos(thQ * Math.PI / 180),
+        show: false
+    };
+    
+    var target = '';
+    var ans = 0;
+    var rows = [];
+    
+    if (t === 1) {
+        target = '\u2220 QTS';
+        ans = 90 + half;
+        rows = [
+            row(`∠QSR = ∠PQR = ${x}°`, '∠ in alt. segment'),
+            gap(),
+            row('In △RSQ:'),
+            row('RS = SQ', 'given'),
+            row(`∠SRQ = ∠RQS = (180° − ${x}°) ÷ 2 = ${base}°`, 'base ∠s, isos. △'),
+            gap(),
+            row('In RSTQ:'),
+            row('∠QTS + ∠SRQ = 180°', 'opp. ∠s, cyclic quad.'),
+            row(`∠QTS = 180° − ${base}° = ${ans}°`)
+        ];
+    }
+    if (t === 2) {
+        target = '\u2220 RQS';
+        ans = base;
+        rows = [
+            row(`∠QSR = ∠PQR = ${x}°`, '∠ in alt. segment'),
+            gap(),
+            row('In △RSQ:'),
+            row('RS = SQ', 'given'),
+            row(`∠RQS = (180° − ${x}°) ÷ 2 = ${ans}°`, 'base ∠s, isos. △')
+        ];
+    }
+    if (t === 3) {
+        target = '\u2220 SRQ';
+        ans = base;
+        rows = [
+            row(`∠QSR = ∠PQR = ${x}°`, '∠ in alt. segment'),
+            gap(),
+            row('In △RSQ:'),
+            row('RS = SQ', 'given'),
+            row(`∠SRQ = (180° − ${x}°) ÷ 2 = ${ans}°`, 'base ∠s, isos. △')
+        ];
+    }
+    
+    var fig = {
+        points: pts,
+        circle: { center: { x: cx, y: cy }, r: R },
+        lines: [
+            { a: 'P', b: '_pr' }, { a: 'R', b: 'S' }, { a: 'S', b: 'T' },
+            { a: 'T', b: 'Q' }, { a: 'Q', b: 'R' }, { a: 'S', b: 'Q' }
+        ],
+        ticks: [{ a: 'R', b: 'S', count: 2 }, { a: 'S', b: 'Q', count: 2 }],
+        labels: baseLabels(pts, ['Q', 'R', 'S', 'T']).concat([{ x: pts.P.x, y: pts.P.y + 12, text: 'P' }]),
+        angles: [{ a: 'R', v: 'Q', b: 'P', label: `${x}°`, r: 18 }]
+    };
+    
+    return mk({
+        typeId: 'circle_xxi',
+        promptHtml: `In the figure, \\(PQ\\) is the tangent to the circle at \\(Q\\). \\(\u2220 PQR=${x}^{\\circ}\\) and \\(RS=SQ\\). Find \\(${target}\\).`,
+        answer: ans,
+        figure: fig,
+        solutionFigure: fig,
+        solutionRows: rows
+    });
+}
+
+function g22() {
+    var half = ri(20, 50);
+    var x = 2 * half;
+    var minY = x + 15;
+    var maxY = 55 + half;
+    var y = ri(minY, maxY);
+    var z = 90 + half - y;
+    var t = ri(1, 3);
+    var tilt = ri(-25, 25);
+    var thP = 240 + tilt;
+    var thQ = thP + x;
+    var thR = thQ + 2 * z;
+    var thS = thR + ri(25, 50);
+    
+    var pts = {
+        O: { x: cx, y: cy },
+        P: polar(thP),
+        Q: polar(thQ),
+        R: polar(thR),
+        S: polar(thS)
+    };
+    pts.T = lineIntersection(pts.P, pts.R, pts.O, pts.Q);
+    
+    var target = '';
+    var given = '';
+    var ans = 0;
+    var rows = [];
+    
+    if (t === 1) {
+        target = '\u2220 QSR';
+        given = `\\(\u2220 POT=${x}^{\\circ}\\) and \\(\u2220 PTQ=${y}^{\\circ}\\)`;
+        ans = z;
+        rows = [
+            row('Join PQ.'),
+            gap(),
+            row('In △OPQ:'),
+            row('OP = OQ', 'radii'),
+            row('∠OPQ = ∠OQP', 'base ∠s, isos. △'),
+            row(`∠OQP = (180° − ${x}°) ÷ 2 = ${90 - half}°`, '∠ sum of △'),
+            gap(),
+            row('In △PQT:'),
+            row(`∠TPQ + ${y}° + ${90 - half}° = 180°`, '∠ sum of △'),
+            row(`∠TPQ = ${ans}°`),
+            gap(),
+            row(`∠QSR = ∠TPQ = ${ans}°`, '∠s in the same segment')
+        ];
+    }
+    if (t === 2) {
+        target = '\u2220 PTQ';
+        given = `\\(\u2220 POT=${x}^{\\circ}\\) and \\(\u2220 QSR=${z}^{\\circ}\\)`;
+        ans = y;
+        rows = [
+            row('Join PQ.'),
+            gap(),
+            row(`∠TPQ = ∠QSR = ${z}°`, '∠s in the same segment'),
+            gap(),
+            row('In △OPQ:'),
+            row('OP = OQ', 'radii'),
+            row(`∠OQP = (180° − ${x}°) ÷ 2 = ${90 - half}°`, 'base ∠s, isos. △'),
+            gap(),
+            row('In △PQT:'),
+            row(`∠PTQ + ${z}° + ${90 - half}° = 180°`, '∠ sum of △'),
+            row(`∠PTQ = ${ans}°`)
+        ];
+    }
+    if (t === 3) {
+        target = '\u2220 POQ';
+        given = `\\(\u2220 PTQ=${y}^{\\circ}\\) and \\(\u2220 QSR=${z}^{\\circ}\\)`;
+        ans = x;
+        rows = [
+            row('Join PQ.'),
+            gap(),
+            row(`∠TPQ = ∠QSR = ${z}°`, '∠s in the same segment'),
+            gap(),
+            row('In △PQT:'),
+            row(`∠TQP + ${y}° + ${z}° = 180°`, '∠ sum of △'),
+            row(`∠TQP = ${90 - half}°`),
+            gap(),
+            row('In △OPQ:'),
+            row('OP = OQ', 'radii'),
+            row(`∠OPQ = ∠OQP = ${90 - half}°`, 'base ∠s, isos. △'),
+            row(`∠POQ = 180° − ${90 - half}° − ${90 - half}° = ${ans}°`, '∠ sum of △')
+        ];
+    }
+    
+    var angs = [];
+    if (t === 1) {
+        angs.push({ a: 'P', v: 'O', b: 'T', label: `${x}°`, r: 18 }, { a: 'P', v: 'T', b: 'Q', label: `${y}°`, r: 20 });
+    }
+    if (t === 2) {
+        angs.push({ a: 'P', v: 'O', b: 'T', label: `${x}°`, r: 18 }, { a: 'Q', v: 'S', b: 'R', label: `${z}°`, r: 20 });
+    }
+    if (t === 3) {
+        angs.push({ a: 'P', v: 'T', b: 'Q', label: `${y}°`, r: 20 }, { a: 'Q', v: 'S', b: 'R', label: `${z}°`, r: 20 });
+    }
+    
+    var fig = {
+        points: pts,
+        circle: { center: pts.O, r: R },
+        lines: [
+            { a: 'P', b: 'O' }, { a: 'O', b: 'Q' }, { a: 'P', b: 'R' },
+            { a: 'Q', b: 'S' }, { a: 'R', b: 'S' }
+        ],
+        labels: baseLabels(pts, ['O', 'P', 'Q', 'R', 'S']).concat([{ x: pts.T.x + 10, y: pts.T.y + 10, text: 'T' }]),
+        angles: angs
+    };
+    
+    var sfig = JSON.parse(JSON.stringify(fig));
+    sfig.lines = fig.lines.concat([{ a: 'P', b: 'Q', color: 'red' }]);
+    
+    return mk({
+        typeId: 'circle_xxii',
+        promptHtml: `In the figure, \\(O\\) is the centre of the circle \\(PQRS\\). \\(PR\\) and \\(OQ\\) intersect at the point \\(T\\). If ${given}, find \\(${target}\\).`,
+        answer: ans,
+        figure: fig,
+        solutionFigure: sfig,
+        solutionRows: rows
+    });
+}
+
+var gens = {
+    circle_i: g1, circle_ii: g2, circle_iii: g3, circle_iv: g4,
+    circle_v: g5, circle_vi: g6, circle_vii: g7, circle_viii: g8,
+    circle_ix: g9, circle_x: g10, circle_xi: g11, circle_xii: g12,
+    circle_xiii: g13, circle_xiv: g14, circle_xv: g15, circle_xvi: g16,
+    circle_xvii: g17, circle_xviii: g18, circle_xix: g19, circle_xx: g20,
+    circle_xxi: g21, circle_xxii: g22
+};
+
+function randomType(exclude){var keys=Object.keys(gens).filter(function(k){return k!==exclude});return pick(keys)}
+function startRandomQuestion(){renderQuestion(gens[randomType('')]())}
+function startSimilarQuestion(){if(currentQuestion&&gens[currentQuestion.typeId])renderQuestion(gens[currentQuestion.typeId]())}
+function startOtherQuestion(){renderQuestion(gens[randomType(currentQuestion?currentQuestion.typeId:'')]())}
+
+function renderQuestion(q){
+  currentQuestion=q;
+  selectedChoice=null;
+  questionSeconds=0;
+  $('menu-screen').classList.add('hidden');
+  $('question-screen').classList.remove('hidden');
+  $('question-display').innerHTML=q.promptHtml;
+  safeTypeset($('question-display'));
+  var wrap=$('choices');
+  wrap.innerHTML='';
+  (q.choices||[]).forEach(function(ch,i){
+    var d=document.createElement('div');
+    d.className='choice';
+    d.innerHTML='\\('+ch.tex+'\\)';
+    d.addEventListener('click',function(){
+      selectedChoice=i;
+      Array.prototype.forEach.call(wrap.children,function(el){el.classList.remove('selected')});
+      d.classList.add('selected');
+    });
+    wrap.appendChild(d);
+  });
+  safeTypeset(wrap);
+  renderFigure('question-figure',q.figure);
+  clearCanvas();
+  updateScore();
+}
+
+function makeBtn(text,cls,fn){var b=document.createElement('button');b.className='btn '+cls;b.type='button';b.textContent=text;b.addEventListener('click',fn);return b}
+
+function showFeedback(ok){
+  $('feedback-title').textContent=ok?'Well done!':'Oops! Something is wrong.';
+  $('feedback-title').style.color=ok?'var(--success)':'var(--danger)';
+  $('feedback-message').textContent=ok?'This is the correct answer. Here is the solution.':'Here is the solution. Please study it carefully.';
+  $('solution-math').innerHTML=renderSolution(currentQuestion);
+  renderFigure('solution-figure',currentQuestion.solutionFigure||currentQuestion.figure);
+  safeTypeset($('solution-math'));
+  var actions=$('feedback-actions');
+  actions.innerHTML='';
+  if(ok){
+    actions.appendChild(makeBtn('Back to menu','btn-blue',function(){closeFeedback();returnToMenu()}));
+    actions.appendChild(makeBtn('Try other questions','btn-green',function(){closeFeedback();startOtherQuestion()}));
+  }else{
+    actions.appendChild(makeBtn('Try a similar question','btn-green',function(){closeFeedback();startSimilarQuestion()}));
+    actions.appendChild(makeBtn('Try other questions','btn-blue',function(){closeFeedback();startOtherQuestion()}));
+    actions.appendChild(makeBtn('Back to menu','btn-gray',function(){closeFeedback();returnToMenu()}));
+  }
+  $('feedback-modal').classList.remove('hidden');
+}
+
+function closeFeedback(){$('feedback-modal').classList.add('hidden')}
+
+function logAnswer(ok){
+  if(!currentQuestion||selectedChoice===null)return;
+  var selected=currentQuestion.choices[selectedChoice]?currentQuestion.choices[selectedChoice].tex:'';
+  answerLog.push({
+    question: currentQuestion.promptText || sanitizeText(currentQuestion.promptHtml),
+    answer: selected,
+    type: 'multiple-choice',
+    correct: ok ? 'yes' : 'no'
+  });
+}
+
+function checkAnswer(){
+  if(selectedChoice===null||!currentQuestion){alert('Please choose an answer first.');return}
+  var ok=selectedChoice===currentQuestion.correctIndex;
+  if(ok)currentScore+=currentQuestion.points||1;
+  logAnswer(ok);
+  showFeedback(ok);
+  updateScore();
+}
+
+function returnToMenu(){$('question-screen').classList.add('hidden');$('menu-screen').classList.remove('hidden');updateScore()}
+function updateScore(){if($('score-display'))$('score-display').textContent=currentScore;if($('overall-timer'))$('overall-timer').textContent=fmt(totalSeconds);if($('question-timer'))$('question-timer').textContent=fmt(questionSeconds)}
+function resetAll(){currentScore=0;totalSeconds=0;questionSeconds=0;currentQuestion=null;selectedChoice=null;answerLog=[];submittedResults=false;closeFeedback();returnToMenu();clearCanvas();updateScore();alert('Score and answer log reset.')}
+
+// Use google.script.run for submission
+function submitResults(){
+  if(answerLog.length===0){alert('No results to submit yet.');return}
+  if(submittedResults){alert('Results already submitted.');return}
+  
+  var payload={responses:answerLog.map(function(item){return{question:item.question,answer:item.answer,type:item.type}})};
+  
+  // Check if we are actually running inside the Google Apps Script environment
+  if(typeof google !== 'undefined' && google.script && google.script.run){
+    google.script.run
+      .withSuccessHandler(function(result) {
+         submittedResults=true;
+         alert('Results submitted successfully.');
+      })
+      .withFailureHandler(function(error) {
+         alert('Submission failed: ' + (error && error.message ? error.message : String(error)));
+      })
+      .processQuizResults(payload); 
+  } else {
+    alert('Running outside Google Apps Script environment. Your quiz works, but results submission is unavailable here.');
+  }
+}
+
+function initCanvas(){canvas=$('draw-canvas');if(!canvas)return;ctx=canvas.getContext('2d');resizeCanvas();setColor(currentColor);setTool('pen');['pointerdown','pointermove','pointerup','pointercancel','pointerout'].forEach(function(ev){canvas.addEventListener(ev,handlePointer,{passive:false})});window.addEventListener('resize',resizeCanvas)}
+function resizeCanvas(){if(!canvas||!ctx)return;var temp=document.createElement('canvas');temp.width=canvas.width||0;temp.height=canvas.height||0;if(temp.width&&temp.height){try{temp.getContext('2d').drawImage(canvas,0,0)}catch(e){}}canvas.width=canvas.offsetWidth||430;canvas.height=canvas.offsetHeight||430;ctx.lineCap='round';ctx.lineJoin='round';if(temp.width&&temp.height){try{ctx.drawImage(temp,0,0)}catch(e){}}}
+function clearCanvas(){if(ctx&&canvas)ctx.clearRect(0,0,canvas.width,canvas.height)}
+function setTool(t){currentTool=t;if($('tool-pen'))$('tool-pen').classList.toggle('active',t==='pen');if($('tool-eraser'))$('tool-eraser').classList.toggle('active',t==='eraser')}
+function setColor(c){currentColor=c;COLORS.forEach(function(v,i){var el=$('color-'+i);if(el)el.classList.toggle('active',v===c)});if(!ctx)return;ctx.globalCompositeOperation='source-over';ctx.strokeStyle=currentColor;ctx.lineWidth=3}
+function getPosFromClient(clientX,clientY){var r=canvas.getBoundingClientRect();return{x:clientX-r.left,y:clientY-r.top}}
+function resetPause(){clearTimeout(pauseTimer);pauseTimer=setTimeout(function(){if(!isDrawing||currentTool==='eraser'||!startPt||!lastPt||!ctx)return;var dist=Math.hypot(lastPt.x-startPt.x,lastPt.y-startPt.y);if(dist<8)return;ctx.putImageData(strokeSnapshot,0,0);ctx.globalCompositeOperation='source-over';ctx.strokeStyle=currentColor;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(startPt.x,startPt.y);ctx.lineTo(lastPt.x,lastPt.y);ctx.stroke();lockedLine=true},260)}
+function endStroke(){clearTimeout(pauseTimer);isDrawing=false;if(ctx)ctx.beginPath();startPt=null;lastPt=null;strokeSnapshot=null;lockedLine=false}
+function handleDrawPoint(p){if(!ctx||!canvas)return;if(!lockedLine){if(currentTool==='eraser'){ctx.globalCompositeOperation='destination-out';ctx.lineWidth=18}else{ctx.globalCompositeOperation='source-over';ctx.strokeStyle=currentColor;ctx.lineWidth=3}ctx.lineTo(p.x,p.y);ctx.stroke();ctx.beginPath();ctx.moveTo(p.x,p.y)}}
+function handlePointer(e){if(!canvas||!ctx)return;e.preventDefault();var p;if(e.touches&&e.touches[0]){p=getPosFromClient(e.touches[0].clientX,e.touches[0].clientY)}else if(e.changedTouches&&e.changedTouches[0]){p=getPosFromClient(e.changedTouches[0].clientX,e.changedTouches[0].clientY)}else{p=getPosFromClient(e.clientX,e.clientY)}if(e.type==='pointerdown'){isDrawing=true;lockedLine=false;startPt=p;lastPt=p;strokeSnapshot=ctx.getImageData(0,0,canvas.width,canvas.height);ctx.beginPath();ctx.moveTo(p.x,p.y);resetPause()}else if(e.type==='pointermove'&&isDrawing){if(lockedLine)return;lastPt=p;handleDrawPoint(p);resetPause()}else{endStroke()}}
+function bind(id,event,fn){var el=$(id);if(el)el.addEventListener(event,fn)}
+
+function init(){
+  if(initialized)return;
+  initialized=true;
+  initCanvas();
+  bind('start-btn','click',startRandomQuestion);
+  bind('submit-btn','click',checkAnswer);
+  bind('back-menu-btn','click',returnToMenu);
+  bind('clear-all-btn','click',clearCanvas);
+  // Removed bindings for submitResults and resetAll
+  bind('tool-pen','click',function(){setTool('pen')});
+  bind('tool-eraser','click',function(){setTool('eraser')});
+  COLORS.forEach(function(c,i){bind('color-'+i,'click',function(){setColor(c)})});
+  if(!timerHandle){timerHandle=setInterval(function(){totalSeconds++;if($('question-screen')&&!$('question-screen').classList.contains('hidden'))questionSeconds++;updateScore()},1000)}
+  updateScore();
+}
+
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init)}else{init()}
+window.addEventListener('load',init);
+})();
+</script>
+</body>
+</html>
