@@ -405,8 +405,14 @@ function g6() {
     var z = ri(20, 32), x = ri(25, 45), y = 180 - 3 * z - x;
     var t = ri(1, 3), thA = 120 + ri(-30, 30);
     var thD = thA - 2 * x, thC = thD - 2 * z, thB = thC - 2 * y;
-    
-    var pts = { A: polar(thA), D: polar(thD), C: polar(thC), B: polar(thB) };
+    var FIG_SCALE = 0.5;   // Change to 0.5 if you need an even smaller figure
+    var rad = R * FIG_SCALE;
+    var pts = {
+    A: polar(thA, rad),
+    D: polar(thD, rad),
+    C: polar(thC, rad),
+    B: polar(thB, rad)
+    };
     pts.E = lineIntersection(pts.A, pts.D, pts.B, pts.C);
     
     var target = '', given = '', ans = 0, rows = [];
@@ -472,16 +478,33 @@ function g6() {
     if (t !== 2) lines.push({ a: 'A', b: 'C' });
     
     var angles = [];
-    if (t === 1) angles.push({ a: 'B', v: 'A', b: 'C', label: `${y}\xB0`, r: 20 }, { a: 'D', v: 'B', b: 'A', label: `${x}\xB0`, r: 18 });
-    if (t === 2) angles.push({ a: 'D', v: 'E', b: 'C', label: `${z}\xB0`, r: 20 }, { a: 'D', v: 'B', b: 'A', label: `${x}\xB0`, r: 18 });
-    if (t === 3) angles.push({ a: 'B', v: 'A', b: 'C', label: `${y}\xB0`, r: 20 }, { a: 'D', v: 'E', b: 'C', label: `${z}\xB0`, r: 20 });
+    if (t === 1) {
+        angles.push(
+            { a: 'B', v: 'A', b: 'C', label: `${y}°`, r: 20 * FIG_SCALE },
+            { a: 'D', v: 'B', b: 'A', label: `${x}°`, r: 18 * FIG_SCALE }
+        );
+    }
+    if (t === 2) {
+        angles.push(
+            { a: 'D', v: 'E', b: 'C', label: `${z}°`, r: 20 * FIG_SCALE },
+            { a: 'D', v: 'B', b: 'A', label: `${x}°`, r: 18 * FIG_SCALE }
+        );
+    }
+    if (t === 3) {
+        angles.push(
+            { a: 'B', v: 'A', b: 'C', label: `${y}°`, r: 20 * FIG_SCALE },
+            { a: 'D', v: 'E', b: 'C', label: `${z}°`, r: 20 * FIG_SCALE }
+        );
+    }
     
     var fig = {
         points: pts,
-        circle: { center: { x: cx, y: cy }, r: R },
+        circle: { center: { x: cx, y: cy }, r: rad },
         lines: lines,
         ticks: [{ a: 'B', b: 'D', count: 2 }, { a: 'D', b: 'E', count: 2 }],
-        labels: baseLabels(pts, ['A', 'B', 'C', 'D']).concat([{ x: pts.E.x + 12, y: pts.E.y, text: 'E' }]),
+        labels: baseLabels(pts, ['A', 'B', 'C', 'D']).concat([
+        { x: pts.E.x + 12 * FIG_SCALE, y: pts.E.y, text: 'E' }
+        ]),
         angles: angles
     };
     
@@ -1003,7 +1026,7 @@ function g12() {
 }
 
 function g13() {
-    var sets = [[40, 4, 3], [36, 3, 3], [30, 3, 2], [45, 5, 4], [20, 4, 4]];
+    var sets = [[40, 4, 3], [36, 3, 3], [30, 3, 2], [45, 5, 4]];
     var s = pick(sets);
     var alpha = s[0];
     var m = s[1];
@@ -1016,13 +1039,20 @@ function g13() {
     var v = ri(1, 3);
     var ans = v === 1 ? theta : v === 2 ? bac : acb;
     var tilt = ri(-15, 15);
-    
+    var FIG_SCALE = 0.43;  // Use 0.5 if you need a smaller diagram
+    var rad = R * FIG_SCALE;
     var pts = {
-        A: polar(270 + tilt),
-        B: polar(270 + tilt + 2 * acb),
-        C: polar(270 + tilt - 2 * alpha)
-    };
-    pts.D = lineIntersection(pts.A, { x: pts.A.x - 200, y: pts.A.y }, pts.B, pts.C);
+    A: polar(270 + tilt, rad),
+    B: polar(270 + tilt + 2 * acb, rad),
+    C: polar(270 + tilt - 2 * alpha, rad)
+};
+
+pts.D = lineIntersection(
+    pts.A,
+    { x: pts.A.x - 200 * FIG_SCALE, y: pts.A.y },
+    pts.B,
+    pts.C
+);
     
     var target = '';
     var rows = [];
@@ -1072,15 +1102,19 @@ function g13() {
     
     var fig = {
         points: pts,
-        circle: { center: { x: cx, y: cy }, r: R },
+        circle: { center: { x: cx, y: cy }, r: rad },
         lines: [
             { a: 'D', b: 'B' },
             { a: 'A', b: 'B' },
             { a: 'A', b: 'C' },
             { a: 'A', b: 'D' }
         ],
-        labels: baseLabels(pts, ['A', 'B', 'C']).concat([{ x: pts.D.x - 10, y: pts.D.y, text: 'D' }]),
-        angles: [{ a: 'C', v: 'A', b: 'D', label: `${alpha}°`, r: 22 }]
+        labels: baseLabels(pts, ['A', 'B', 'C']).concat([
+    { x: pts.D.x - 10 * FIG_SCALE, y: pts.D.y, text: 'D' }
+]),
+angles: [
+    { a: 'C', v: 'A', b: 'D', label: `${alpha}°`, r: 22 * FIG_SCALE }
+]
     };
     
     return mk({
@@ -1137,9 +1171,9 @@ function g14() {
         ],
         labels: [
             { x: 115, y: 40, text: 'A' },
-            { x: 58, y: 260, text: 'B' },
+            { x: 60, y: 260, text: 'B' },
             { x: 282, y: 260, text: 'C' },
-            { x: 90, y: 150, text: String(AB) },
+            { x: 75, y: 150, text: String(AB) },
             { x: 170, y: 265, text: String(BC) },
             { x: 205, y: 145, text: String(AC) }
         ]
@@ -1306,7 +1340,9 @@ function g16() {
     }
     
     var tilt = ri(-20, 20);
-    var rad = R;
+    var FIG_SCALE = 0.5;
+    var rad = R * FIG_SCALE;
+
     var pts = {
         S: polar(tilt, rad / Math.sin(S * Math.PI / 360)),
         P: polar(tilt + 90 - S / 2, rad),
@@ -1323,14 +1359,14 @@ function g16() {
             { a: 'P', b: 'Q' }, { a: 'Q', b: 'R' }
         ],
         labels: [
-            { x: pts.P.x, y: pts.P.y - 16, text: 'P' },
-            { x: pts.R.x, y: pts.R.y + 16, text: 'R' },
-            { x: pts.Q.x - 12, y: pts.Q.y, text: 'Q' },
-            { x: pts.S.x + 14, y: pts.S.y, text: 'S' }
+        { x: pts.P.x, y: pts.P.y - 16 * FIG_SCALE, text: 'P' },
+        { x: pts.R.x, y: pts.R.y + 16 * FIG_SCALE, text: 'R' },
+        { x: pts.Q.x - 12 * FIG_SCALE, y: pts.Q.y, text: 'Q' },
+        { x: pts.S.x + 14 * FIG_SCALE, y: pts.S.y, text: 'S' }
         ],
-        angles: [
-            { a: 'P', v: 'S', b: 'R', label: `${S}°`, r: 22 },
-            { a: 'P', v: 'R', b: 'Q', label: `${Rang}°`, r: 18 }
+    angles: [
+        { a: 'P', v: 'S', b: 'R', label: `${S}°`, r: 22 * FIG_SCALE },
+        { a: 'P', v: 'R', b: 'Q', label: `${Rang}°`, r: 18 * FIG_SCALE }
         ]
     };
     
@@ -1379,7 +1415,8 @@ function g17() {
     var rA = 1 / Math.sin(A * Math.PI / 360);
     var rB = 1 / Math.sin(B * Math.PI / 360);
     var rC = 1 / Math.sin(Cang * Math.PI / 360);
-    var rr = 85 / Math.max(rA, rB, rC);
+    var FIG_SCALE = 1.18; // Slight enlargement
+    var rr = (85 * FIG_SCALE) / Math.max(rA, rB, rC);
     
     var pts = {
         O: { x: cx, y: cy },
@@ -1401,17 +1438,17 @@ function g17() {
     
     var anglesArr = [];
     if (v === 1) {
-        anglesArr.push({ a: 'F', v: 'O', b: 'D', label: `${givenCent}°`, r: 18 });
+        anglesArr.push({ a: 'F', v: 'O', b: 'D', label: `${givenCent}°`, r: 18 * FIG_SCALE });
     } else if (v === 2) {
-        anglesArr.push({ a: 'E', v: 'O', b: 'F', label: `${givenCent}°`, r: 18 });
+        anglesArr.push({ a: 'E', v: 'O', b: 'F', label: `${givenCent}°`, r: 18 * FIG_SCALE });
     } else {
-        anglesArr.push({ a: 'D', v: 'O', b: 'E', label: `${givenCent}°`, r: 18 });
+        anglesArr.push({ a: 'D', v: 'O', b: 'E', label: `${givenCent}°`, r: 18 * FIG_SCALE });
     }
     
     if (v === 3) {
-        anglesArr.push({ a: 'C', v: 'B', b: 'A', label: `${givenVert}°`, r: 18 });
+        anglesArr.push({ a: 'C', v: 'B', b: 'A', label: `${givenVert}°`, r: 18 * FIG_SCALE });
     } else {
-        anglesArr.push({ a: 'A', v: 'C', b: 'B', label: `${givenVert}°`, r: 18 });
+        anglesArr.push({ a: 'A', v: 'C', b: 'B', label: `${givenVert}°`, r: 18 * FIG_SCALE });
     }
     
     var fig = {
